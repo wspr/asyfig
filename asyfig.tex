@@ -1,0 +1,226 @@
+\RequirePackage{filecontents}
+\begin{filecontents*}{README.txt}
+__________________
+The asyfig package
+
+Will Robertson 
+Copyright 2008
+\end{filecontents*}
+%%%%%%%%%1%%%%%%%%%2%%%%%%%%%3%%%%%%%%%4%%%%%%%%%5
+
+\begin{filecontents*}{asyfig.sty}
+\ProvidesPackage{asyfig}[2008/08/30 v0.1
+  Commands for using asymptote figures]
+
+\RequirePackage{graphicx,color,import}
+\RequirePackage{inversepath}[2008/07/31 v0.2]
+\RequirePackage{asyalign}
+
+\newcommand\ImportIfFileExists[4]{%
+  \IfFileExists{#1#2}
+    {\import{#1}{#2}#3}
+    {#4}}
+
+\providecommand\asypath{}
+
+\def\asyfig{%
+  \begingroup
+    \catcode`\_=11\relax % just to be sure
+    \@asyfig}
+\newcommand\@asyfig[2][]{%
+    \inversepath*{#2}%
+    \ImportIfFileExists{\asypath\ip@directpath}{\ip@lastelement_}{}{%
+        \PackageWarning{asyfig}{^^J%
+          \space\space "\asypath\ip@directpath\ip@lastelement" not found.^^J%
+          This warning occurred}}
+  \endgroup}
+
+\end{filecontents*}
+%%%%%%%%%1%%%%%%%%%2%%%%%%%%%3%%%%%%%%%4%%%%%%%%%5
+
+\begin{filecontents*}{asyalign.sty}
+\ProvidesPackage{asyalign}
+
+\RequirePackage{ifpdf}
+
+\newbox\ASYbox
+\newdimen\ASYdimen
+
+\def\ASYbase#1#2{%
+  \setbox\ASYbox=\hbox{#1}%
+  \ASYdimen=\ht\ASYbox
+  \setbox\ASYbox=\hbox{#2}%
+  \lower\ASYdimen\box\ASYbox}
+
+\ifpdf
+
+\def\ASYalign(#1,#2)(#3,#4)#5#6{%
+  \leavevmode
+  \setbox\ASYbox=\hbox{#6}%
+  \setbox\ASYbox\hbox{%
+    \ASYdimen=\ht\ASYbox%
+    \advance\ASYdimen by\dp\ASYbox
+    \kern#3\wd\ASYbox
+    \raise#4\ASYdimen\box\ASYbox}%
+  \put(#1,#2){%
+    \special{pdf:q #5 0 0 cm}%
+    \wd\ASYbox\z@\dp\ASYbox\z@\ht\ASYbox\z@
+    \box\ASYbox%
+    \special{pdf:Q}%
+  }}
+\let\ASYraw\@firstofone
+
+\else
+
+\def\ASYalign(#1,#2)(#3,#4)#5#6{%
+  \leavevmode
+  \setbox\ASYbox=\hbox{#6}%
+  \setbox\ASYbox\hbox{%
+    \ASYdimen=\ht\ASYbox
+    \advance\ASYdimen by\dp\ASYbox
+    \kern#3\wd\ASYbox
+    \raise#4\ASYdimen\box\ASYbox}%
+  \put(#1,#2){%
+    \special{%
+      ps:gsave currentpoint currentpoint translate 
+      [#5 0 0] concat neg exch neg exch translate}%
+    \box\ASYbox
+    \special{ps:currentpoint grestore moveto}%
+  }}
+\def\ASYraw#1{%
+  currentpoint currentpoint translate matrix currentmatrix
+  100 12 div -100 12 div scale
+  #1
+  setmatrix neg exch neg exch translate}
+
+\fi
+\end{filecontents*}
+%%%%%%%%%1%%%%%%%%%2%%%%%%%%%3%%%%%%%%%4%%%%%%%%%5
+
+% Conditionally compile the documentation & generate the .ins file:
+\providecommand\asyfigCompile{Y}
+\if\asyfigCompile N
+  \expandafter\endinput
+\fi
+
+\begin{filecontents*}{test-asyfig.tex}
+%\pdfoutput=0
+\RequirePackage{ifpdf}
+\immediate\write18{%
+  \ifpdf
+    asy -wait -inlinetex -tex pdflatex frf.asy 
+  \else
+    asy -wait -inlinetex -tex latex frf.asy
+  \fi}
+\documentclass[12pt]{article}
+\usepackage[sc]{mathpazo}
+\usepackage{asyfig}
+\begin{document}
+\ifpdf
+  \fbox{\asyfig{frf}}
+\else
+  \fbox{\asyfig{frf}}
+\fi
+\end{document}
+\end{filecontents*}
+
+\begin{filecontents}{frf.asy}
+texpreamble("\usepackage[sc]{mathpazo}");
+unitsize(10mm);
+draw( (0,0){right}..{up}(3,2){down}..
+      {down}(4,-2){up}..{right}(7,0) );
+draw( "Resonance" , align=E, (3,2) );
+draw( "Anti-resonance" , align=W, (4,-2) );
+\end{filecontents*}
+
+\begin{filecontents*}{asyfig.ins}
+%&latex
+\def\asyfigCompile{N}
+\input asyfig.tex
+\csname@@end\endcsname
+\end{filecontents*}
+
+\makeatletter
+\documentclass{article}
+
+\usepackage[rm,medium]{titlesec}
+
+\usepackage{bigfoot,xcolor}
+\usepackage[colorlinks,linktocpage]{hyperref}
+
+\usepackage{gmdoc}
+\usepackage{gmverb}
+\dekclubs
+\stanzaskip=\bigskipamount 
+\CodeSpacesGrey
+
+\usepackage{tocloft,varwidth}
+\setcounter{tocdepth}{1}
+\def\tocwidthA{0.45}
+\def\tocwidthB{0.45}
+\def\cftpartfont{\scshape}
+\def\cftsecfont{\small}
+\cftbeforesecskip=0pt
+\def\cftpartleader{}
+\def\cftpartafterpnum{\cftparfillskip}
+\def\cftsecleader{}
+\def\cftsecafterpnum{\cftparfillskip}
+
+\let\pkg\textsf
+\def\pkgopt#1{\texttt{[#1]}}
+
+\def\PDF{\textsc{pdf}}
+\def\PS{\textsc{ps}}
+\def\DVI{\textsc{dvi}}
+\def\EPS{\textsc{eps}}
+
+\usepackage{amsmath}
+\usepackage{asyfig}
+\usepackage[T1]{fontenc}
+\usepackage{microtype}
+\usepackage{lmodern}
+\usepackage[sc,osf]{mathpazo}
+\linespread{1.1}
+\frenchspacing
+
+\GetFileInfo{asyfig.sty}
+\begin{document}
+{\addtocontents{toc}{\protect\begin{varwidth}[t]{\tocwidthA\linewidth}}}
+
+\title{The \pkg{asyfig} package}
+\author{
+  \normalsize Will Robertson\footnote{\texttt{wspr81@gmail.com}}}
+\date{\fileversion\qquad\filedate}
+
+\maketitle
+
+\begin{abstract}
+\end{abstract}
+
+\tableofcontents
+
+\part{User documentation}
+
+\section{Introduction}
+
+\section{Package information}
+The most recent publicly released version of \pkg{asyfig} is available at \textsc{CTAN}:\\
+\centerline{\url{http://tug.ctan.org/pkg/asyfig/}}\\ 
+Historical and developmental versions are available at GitHub:\\ \centerline{\url{http://github.com/wspr/asyfig/}}\\
+While general feedback at \url{wspr81@gmail.com} is welcomed, specific bugs should be reported through the bug tracker at FogBugz: \url{https://wspr.fogbugz.com/} (click `\textsc{tasks}: Enter a New Case').
+
+This package is freely modifiable and distributable under the terms and conditions of the \LaTeX\ Project Public Licence, version 1.3c or greater (your choice). The latest version of
+this license is available at: \url{http://www.latex-project.org/lppl.txt}. This work is maintained by \textsc{Will Robertson}.
+
+{\addtocontents{toc}{\protect\end{varwidth}\protect\hfill}}
+{\addtocontents{toc}{\protect\begin{varwidth}[t]{\protect\tocwidthB\protect\linewidth}}}
+\clearpage
+\parindent=0pt
+\part{Implementation}
+\section{The \pkg{asyfig} package}
+\DocInput{asyfig.sty}
+\section{The \pkg{asyalign} package}
+\DocInput{asyalign.sty}
+
+{\addtocontents{toc}{\protect\end{varwidth}}}
+\end{document}
