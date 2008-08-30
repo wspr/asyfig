@@ -8,7 +8,7 @@ Copyright 2008
 \end{filecontents*}
 %%%%%%%%%1%%%%%%%%%2%%%%%%%%%3%%%%%%%%%4%%%%%%%%%5
 
-\begin{filecontents*}{asyfig.sty}
+\begin{filecontents}{asyfig.sty}
 \ProvidesPackage{asyfig}[2008/08/30 v0.1
   Commands for using asymptote figures]
 
@@ -35,12 +35,14 @@ Copyright 2008
           This warning occurred}}
   \endgroup}
 
-\end{filecontents*}
+\end{filecontents}
 %%%%%%%%%1%%%%%%%%%2%%%%%%%%%3%%%%%%%%%4%%%%%%%%%5
 
-\begin{filecontents*}{asyalign.sty}
-\ProvidesPackage{asyalign}
 
+
+
+\begin{filecontents}{asyalign.sty}
+\ProvidesPackage{asyalign}
 \RequirePackage{ifpdf}
 
 \newbox\ASYbox
@@ -53,78 +55,124 @@ Copyright 2008
   \lower\ASYdimen\box\ASYbox}
 
 \ifpdf
-
-\def\ASYalign(#1,#2)(#3,#4)#5#6{%
-  \leavevmode
-  \setbox\ASYbox=\hbox{#6}%
-  \setbox\ASYbox\hbox{%
-    \ASYdimen=\ht\ASYbox%
-    \advance\ASYdimen by\dp\ASYbox
-    \kern#3\wd\ASYbox
-    \raise#4\ASYdimen\box\ASYbox}%
-  \put(#1,#2){%
-    \special{pdf:q #5 0 0 cm}%
-    \wd\ASYbox\z@\dp\ASYbox\z@\ht\ASYbox\z@
-    \box\ASYbox%
-    \special{pdf:Q}%
-  }}
-\let\ASYraw\@firstofone
+  \def\ASYalign(#1,#2)(#3,#4)#5#6{%
+    \leavevmode
+    \setbox\ASYbox=\hbox{#6}%
+    \setbox\ASYbox\hbox{%
+      \ASYdimen=\ht\ASYbox%
+      \advance\ASYdimen by\dp\ASYbox
+      \kern#3\wd\ASYbox
+      \raise#4\ASYdimen\box\ASYbox}%
+    \put(#1,#2){%
+      \special{pdf:q #5 0 0 cm}%
+      \wd\ASYbox\z@\dp\ASYbox\z@\ht\ASYbox\z@
+      \box\ASYbox%
+      \special{pdf:Q}%
+    }}
+  \let\ASYraw\@firstofone
 
 \else
-
-\def\ASYalign(#1,#2)(#3,#4)#5#6{%
-  \leavevmode
-  \setbox\ASYbox=\hbox{#6}%
-  \setbox\ASYbox\hbox{%
-    \ASYdimen=\ht\ASYbox
-    \advance\ASYdimen by\dp\ASYbox
-    \kern#3\wd\ASYbox
-    \raise#4\ASYdimen\box\ASYbox}%
-  \put(#1,#2){%
-    \special{%
-      ps:gsave currentpoint currentpoint translate 
-      [#5 0 0] concat neg exch neg exch translate}%
-    \box\ASYbox
-    \special{ps:currentpoint grestore moveto}%
-  }}
-\def\ASYraw#1{%
-  currentpoint currentpoint translate matrix currentmatrix
-  100 12 div -100 12 div scale
-  #1
-  setmatrix neg exch neg exch translate}
-
+  \def\ASYalign(#1,#2)(#3,#4)#5#6{%
+    \leavevmode
+    \setbox\ASYbox=\hbox{#6}%
+    \setbox\ASYbox\hbox{%
+      \ASYdimen=\ht\ASYbox
+      \advance\ASYdimen by\dp\ASYbox
+      \kern#3\wd\ASYbox
+      \raise#4\ASYdimen\box\ASYbox}%
+    \put(#1,#2){%
+      \special{%
+        ps:gsave currentpoint currentpoint translate 
+        [#5 0 0] concat neg exch neg exch translate}%
+      \box\ASYbox
+      \special{ps:currentpoint grestore moveto}%
+    }}
+  \def\ASYraw#1{%
+    currentpoint currentpoint translate matrix currentmatrix
+    100 12 div -100 12 div scale
+    #1
+    setmatrix neg exch neg exch translate}
 \fi
-\end{filecontents*}
+\end{filecontents}
 %%%%%%%%%1%%%%%%%%%2%%%%%%%%%3%%%%%%%%%4%%%%%%%%%5
 
-% Conditionally compile the documentation & generate the .ins file:
-\providecommand\asyfigCompile{Y}
-\if\asyfigCompile N
-  \expandafter\endinput
-\fi
+\begin{filecontents}{asyprocess.sty}
+\ProvidesPackage{asyprocess}
+\nofiles
+
+\RequirePackage{ifpdf,catchfile,ifplatform,color,graphicx}
+\RequirePackage[active,tightpage]{preview}
+
+\def\@par@macro{\par}
+
+\def\asy@status{asyprocess-statusfile.txt}
+
+\edef\@tempa{\detokenize{-comp}}
+\@temptokena{\def\asy@strip@comp#1}
+\expandafter\the\expandafter\@temptokena\@tempa#2\@nil{#1}
+\edef\asy@compname{\expandafter\asy@strip@comp\jobname-comp\@nil}
+
+\newcommand\ProcessAsy{%
+  \immediate\write18{%
+    asy -wait -inlinetex -tex \ifpdf pdf\fi latex 
+      \asy@compname\space 2> \asy@status}%
+  \CatchFileDef{\@tempb}{\asy@status}{}%
+  \immediate\write18{\ifwindows del \else rm \fi \asy@status}     
+  \ifx\@tempb\@par@macro
+    \expandafter\@gobble
+  \else
+    \g@addto@macro\@tempb{^^J%
+      ------------ ASY ERROR ------------^^J%
+      -----------------------------------}%
+    \expandafter\@firstofone
+  \fi{%
+     \nonstopmode
+     \typeout{%
+       -----------------------------------^^J%
+       ------------ ASY ERROR ------------^^J}
+     \typeout{\expandafter\strip@prefix\meaning\@tempb\@nil}
+     \batchmode
+     \end{document}}}
+
+\newcommand\ShowAsy{%
+  \begin{preview}
+    \input{\asy@compname_}
+  \end{preview}}
+
+\AtBeginDocument{\InputIfFileExists{\asy@compname_.pre}{}{}}
+
+\end{filecontents}
+
 
 \begin{filecontents*}{test-asyfig.tex}
-%\pdfoutput=0
+
+%\pdfoutput=0 % uncomment this to enable non-PDF mode
+
+% this would normally be done by an external script:
 \RequirePackage{ifpdf}
 \immediate\write18{%
-  \ifpdf
-    asy -wait -inlinetex -tex pdflatex frf.asy 
-  \else
-    asy -wait -inlinetex -tex latex frf.asy
-  \fi}
-\documentclass[12pt]{article}
+  \ifpdf pdf\fi latex 
+    -shell-escape 
+    -interaction=batchmode 
+    -jobname=frf-comp
+    \unexpanded{%
+      "\RequirePackage{asyprocess}\ProcessAsy
+       \documentclass{article}
+       \begin{document}\ShowAsy
+       \end{document}"
+    }}
+
+\documentclass[12pt,twocolumn]{article}
 \usepackage[sc]{mathpazo}
 \usepackage{asyfig}
 \begin{document}
-\ifpdf
-  \fbox{\asyfig{frf}}
-\else
-  \fbox{\asyfig{frf}}
-\fi
+A boxed graphic:\\
+\fbox{\sffamily\asyfig{frf}}\par
+Note the font in the graphic follows the document font.
 \end{document}
 \end{filecontents*}
 
-\begin{filecontents}{frf.asy}
+\begin{filecontents*}{frf.asy}
 texpreamble("\usepackage[sc]{mathpazo}");
 unitsize(10mm);
 draw( (0,0){right}..{up}(3,2){down}..
@@ -133,6 +181,19 @@ draw( "Resonance" , align=E, (3,2) );
 draw( "Anti-resonance" , align=W, (4,-2) );
 \end{filecontents*}
 
+
+
+
+% Conditionally compile the documentation & generate the .ins file:
+\providecommand\asyfigCompile{Y}
+\makeatletter
+\if\asyfigCompile N
+  \expandafter\@@end
+\fi
+
+
+
+
 \begin{filecontents*}{asyfig.ins}
 %&latex
 \def\asyfigCompile{N}
@@ -140,10 +201,13 @@ draw( "Anti-resonance" , align=W, (4,-2) );
 \csname@@end\endcsname
 \end{filecontents*}
 
+
+
+
 \makeatletter
 \documentclass{article}
 
-\usepackage[rm,medium]{titlesec}
+\usepackage[it,medium]{titlesec}
 
 \usepackage{bigfoot,xcolor}
 \usepackage[colorlinks,linktocpage]{hyperref}
@@ -174,7 +238,9 @@ draw( "Anti-resonance" , align=W, (4,-2) );
 \def\DVI{\textsc{dvi}}
 \def\EPS{\textsc{eps}}
 
-\usepackage{amsmath}
+\usepackage{amsmath,listings}
+\lstset{basicstyle=\ttfamily,columns=fullflexible}
+
 \usepackage{asyfig}
 \usepackage[T1]{fontenc}
 \usepackage{microtype}
@@ -187,7 +253,7 @@ draw( "Anti-resonance" , align=W, (4,-2) );
 \begin{document}
 {\addtocontents{toc}{\protect\begin{varwidth}[t]{\tocwidthA\linewidth}}}
 
-\title{The \pkg{asyfig} package}
+\title{The asyfig package}
 \author{
   \normalsize Will Robertson\footnote{\texttt{wspr81@gmail.com}}}
 \date{\fileversion\qquad\filedate}
@@ -202,6 +268,34 @@ draw( "Anti-resonance" , align=W, (4,-2) );
 \part{User documentation}
 
 \section{Introduction}
+Asymptote (or |asy|) is a vector graphics programming language inspired by MetaPost but based around an extended C-like language and full support for 3\textsc{d} bezier curves. Asymptote uses an auxiliary \LaTeX\ process to typeset its labels, and figures can be either generated as stand-alone graphics or in an `inline' form in which labels get placed by the main typesetting process at the figure is inserted into a document.
+
+Support for |asy| in a \LaTeX\ document is provided by the \pkg{asymptote} package, which defines the |\begin{asy}| environment in which |asy| figures may be directly typed. In this case, the source file contains the conplete specification for the text and graphics in the document. However, for large documents it can be quite inconvenient to maintain |asy| graphics that are inline with the document source, because the whole document requires two compilations before any changes in the graphic can be visualised.
+
+This package, \pkg{asyfig}, provides an alternative, whereby all |asy| figures are defined \emph{separately} from the source in their own individual |.asy| files. \pkg{asyfig} uses Asymptote's inline mode so that labels in the graphics are produced by the main typesetting run; this ensures consistent font and size selection of text within the graphics. In addition, each individual |.asy| graphic can be very quickly processed individually to facilitate easy maintenance and editing of the graphics.
+
+\section{Getting started}
+
+Load the \pkg{asyfig} package like any other. I'll discuss the workflow of the package with an illustrative example.
+
+\paragraph{An \texttt{asy} graphic} 
+First we need an example Asymptote graphic. This package is distributed with one such, |frf.asy|:
+\lstinputlisting{frf.asy}
+Material within |texpreamble| is \emph{not} used in the final typesetting of the labels; it is purely for the `proof' graphic that is produced before the graphic is integrated within the main document.
+
+\paragraph{Inserting the graphic} 
+After processing (see the next step), this graphic can be included in the document with the \cmd\asyfig\arg{graphic name} command. It does \emph{not} take any option arguments like a regular graphic (cf.~\cmd\includegraphics) to affect the scaling or rotation of the graphic; you are expected to produce the figure in the correct size and orientation within Asymptote.
+
+\paragraph{Processing the graphic}
+But before the graphic can be inserted it must be processed (in the future I might make this an automatic option within the package).  The processing is performed by the \pkg{asyprocess} package in an auxiliary \LaTeX\ execution. Here is the shell script that I use to do this:
+\begin{lstlisting}
+#!/bin/sh
+pdflatex -shell-escape -interaction=batchmode -jobname=$1-comp 
+  "\RequirePackage{asyprocess}\ProcessAsy
+   \documentclass{article}\begin{document}\ShowAsy\end{document}"
+\end{lstlisting}
+Simply change |pdflatex| to |latex| to have \EPS\ graphics produced by Asymptote.
+
 
 \section{Package information}
 The most recent publicly released version of \pkg{asyfig} is available at \textsc{CTAN}:\\
@@ -217,10 +311,12 @@ this license is available at: \url{http://www.latex-project.org/lppl.txt}. This 
 \clearpage
 \parindent=0pt
 \part{Implementation}
-\section{The \pkg{asyfig} package}
+\section{The asyfig package}
 \DocInput{asyfig.sty}
-\section{The \pkg{asyalign} package}
+\section{The asyalign package}
 \DocInput{asyalign.sty}
+\section{The asyprocess package}
+\DocInput{asyprocess.sty}
 
 {\addtocontents{toc}{\protect\end{varwidth}}}
 \end{document}
