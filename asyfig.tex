@@ -253,14 +253,15 @@ draw( "Anti-resonance" , align=W, (4,-2) );
 \begin{document}
 {\addtocontents{toc}{\protect\begin{varwidth}[t]{\tocwidthA\linewidth}}}
 
-\title{The asyfig package}
-\author{
+\title{The \pkg{asyfig} packages}
+\author{%
   \normalsize Will Robertson\footnote{\texttt{wspr81@gmail.com}}}
 \date{\fileversion\qquad\filedate}
 
 \maketitle
 
 \begin{abstract}
+This suite of packages provides an alternate method of including stand-alone Aymptote figures within \LaTeX\ documents via the \cmd\asyfig\ command.
 \end{abstract}
 
 \tableofcontents
@@ -287,7 +288,7 @@ Material within |texpreamble| is \emph{not} used in the final typesetting of the
 After processing (see the next step), this graphic can be included in the document with the \cmd\asyfig\arg{graphic name} command. It does \emph{not} take any option arguments like a regular graphic (cf.~\cmd\includegraphics) to affect the scaling or rotation of the graphic; you are expected to produce the figure in the correct size and orientation within Asymptote.
 
 \paragraph{Processing the graphic}
-But before the graphic can be inserted it must be processed (in the future I might make this an automatic option within the package).  The processing is performed by the \pkg{asyprocess} package in an auxiliary \LaTeX\ execution. Here is the shell script that I use to do this:
+But before the graphic can be inserted it must be processed (in the future I might make this an automatic option within the package).  The processing is performed by the \pkg{asyprocess} package in an auxiliary \LaTeX\ execution. Here is the shell script, called (say) |asyprocess|, that I use to do this: (so figure processing would be `|asyprocess frf|' in this example)
 \begin{lstlisting}
 #!/bin/sh
 pdflatex -shell-escape -interaction=batchmode -jobname=$1-comp 
@@ -298,7 +299,7 @@ Simply change |pdflatex| to |latex| to have \EPS\ graphics produced by Asymptote
 
 
 \section{Package information}
-The most recent publicly released version of \pkg{asyfig} is available at \textsc{CTAN}:\\
+The most recent publicly released version of \pkg{asyfig} will be available at \textsc{CTAN}:\\
 \centerline{\url{http://tug.ctan.org/pkg/asyfig/}}\\ 
 Historical and developmental versions are available at GitHub:\\ \centerline{\url{http://github.com/wspr/asyfig/}}\\
 While general feedback at \url{wspr81@gmail.com} is welcomed, specific bugs should be reported through the bug tracker at FogBugz: \url{https://wspr.fogbugz.com/} (click `\textsc{tasks}: Enter a New Case').
