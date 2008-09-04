@@ -21,28 +21,133 @@ Copyright 2008
 \ProvidesPackage{asyfig}[2008/08/30 v0.1
   Commands for using asymptote figures]
 
-\RequirePackage{graphicx,color,import}
-\RequirePackage{inversepath}[2008/07/31 v0.2]
-\RequirePackage{asyalign}
+% This package is the main user interface for inserting external |asy| figures
+% into the document.
 
-\newcommand\ImportIfFileExists[4]{%
-  \IfFileExists{#1#2}
-    {\import{#1}{#2}#3}
-    {#4}}
+\RequirePackage{%
+  asyalign,color,ifmtarg,ifpdf,ifplatform,import,
+  graphicx,pdftexcmds,suffix,xkeyval}
 
-\providecommand\asypath{}
+\def\@True{11}
+\def\@False{01}
+\let\asy@always\@False
+\let\asy@never\@False
+\let\asy@process\@False
+\def\asy@If#1{\if#1\relax\expandafter\@firstoftwo\else\expandafter\@secondoftwo\fi}
 
-\def\asyfig{%
+\define@choicekey*{asyfig.sty}{process}[\@tempa\@tempb]{all,none,auto}{%
+  \ifcase\@tempb\relax
+    \let\asy@always\@True
+  \or
+    \let\asy@never\@True
+  \or
+  \fi
+}
+\ExecuteOptions{process=auto}
+
+\ProcessOptionsX
+
+% \subsection{Auxiliary macros}
+
+\def\asy@splitpath#1/#2/{%
+% Recursive macro that is used like\\
+% \qquad |\asy@splitpath abc/def/ghi.asy/@nil/|\\
+% It defines |\asy@filename| $\to$ |ghi.asy| and |\asy@path| $\to$ |abc/def/|
+  \ifx\@nil#2\relax
+% If input is \<anything>|/\@nil/| then we've reached the end:
+    \def\asy@filename{#1}%
+  \else
+% Otherwise we're in the middle of the slash-separated list;
+% build up |\asy@path|, and iterate:
+    \edef\asy@path{\asy@path#1/}%
+    \def\@tempa{\asy@splitpath#2/}%
+    \expandafter\@tempa
+  \fi
+}
+
+\newcommand\asypath[1]{\def\asy@pathprefix{#1}}
+\asypath{}
+
+\def\asy@asyfile{\asy@pathprefix\asy@path\asy@filename.asy}
+\def\asy@texfile{\asy@pathprefix\asy@path\asy@filename\string_.tex}
+
+\newcommand\asyfig[2][]{%
+  \let\asy@path\@empty
+  \asy@splitpath #2/\@nil/%
+  \IfFileExists{\asy@asyfile}{%
+    \asy@If\asy@process{}{%
+    \asy@If\asy@always{%
+      \let\asy@process\@True
+    }{%
+      \IfFileExists{\asy@texfile}{%
+        \asy@If\asy@never{}{%
+          % compare file dates to see if we want to reprocess:
+          \ifnum\pdf@strcmp{\pdf@filemoddate{\asy@texfile}}
+                           {\pdf@filemoddate{\asy@asyfile}} < \z@ 
+            \let\asy@process\@True
+          \fi
+        }%
+      }{% if the .tex file doesn't exist, either
+        % give an error or process the .asy file:
+        \asy@If\asy@never{%
+          \PackageError{asyfig}{%
+            ^^J\space\space\space\space
+            "\asy@pathprefix\asy@path\asy@filename.asy" requires processing%
+          }{%
+            The generated file that is required to insert the asy graphic,
+            ^^J\space\space\space\space
+            "\asy@pathprefix\asy@path\asy@filename\string_.tex"^^J%
+            does not exist.
+            Please process the asy figure manually or de-activate the^^J% 
+            [process=none] package option.
+          }%
+        }{%
+          \let\asy@process\@True
+        }
+      }%
+    }}%
+    \asy@If\asy@process{%
+      \edef\@tempa{\asy@pathprefix\asy@path}%
+      \pdf@system{%
+        echo "^^J====== ASY PROCESS =====^^J"
+        \asy@cmdsep
+        \ifx\@tempa\@empty\else
+          cd \@tempa
+          \asy@cmdsep
+        \fi
+        \ifpdf pdf\fi latex 
+          -shell-escape 
+          -interaction=batchmode 
+          -jobname=\asy@filename-comp
+        \unexpanded{%
+          "\RequirePackage{asyprocess}\ProcessAsy
+           \documentclass{article}
+           \begin{document}\ShowAsy
+           \end{document}"
+        }%
+        \asy@cmdsep
+        echo "^^J==== ASY END PROCESS ===^^J"
+      }%
+    }{}%
+    \import{\asy@pathprefix\asy@path}{\asy@filename\string_.tex}%
+  }{%
+    \PackageWarning{asyfig}{%
+      ^^J\space\space
+      "\asy@pathprefix\asy@path\asy@filename.asy" not found.^^J%
+      This warning occurred%
+    }%
+  }%
+  \let\asy@process\@False
+}
+
+\WithSuffix\newcommand\asyfig*[2][]{%
   \begingroup
-    \catcode`\_=11\relax % just to be sure
-    \@asyfig}
-\newcommand\@asyfig[2][]{%
-    \inversepath*{#2}%
-    \ImportIfFileExists{\asypath\ip@directpath}{\ip@lastelement_}{}{%
-        \PackageWarning{asyfig}{^^J%
-          \space\space "\asypath\ip@directpath\ip@lastelement" not found.^^J%
-          This warning occurred}}
-  \endgroup}
+    \let\asy@process\@True
+    \csname\NoSuffixName\asyfig\endcsname[#1]{#2}%
+  \endgroup
+}
+
+\def\asy@cmdsep{\ifwindows \string& \else; \fi}
 
 \end{filecontents}
 %%%%%%%%%1%%%%%%%%%2%%%%%%%%%3%%%%%%%%%4%%%%%%%%%5
@@ -52,6 +157,9 @@ Copyright 2008
 
 \begin{filecontents}{asyalign.sty}
 \ProvidesPackage{asyalign}
+
+% This package provides code for placing Asymptote labels inline in \LaTeX\ documents. It is adapted from code that is usually included within Aymptote's \<filename>|_.pre| file, which provides a \LaTeX\ preamble for |asy| processing; this preamble is skipped with the ]pkg{asyfig} package since all figures inherit the preamble from that of the main document.
+
 \RequirePackage{ifpdf}
 
 \newbox\ASYbox
@@ -68,14 +176,12 @@ Copyright 2008
     \leavevmode
     \setbox\ASYbox=\hbox{#6}%
     \setbox\ASYbox\hbox{%
-      \ASYdimen=\ht\ASYbox%
-      \advance\ASYdimen by\dp\ASYbox
       \kern#3\wd\ASYbox
-      \raise#4\ASYdimen\box\ASYbox}%
+      \raise#4\dimexpr\ht\ASYbox+\dp\ASYbox\relax\box\ASYbox}%
     \put(#1,#2){%
       \special{pdf:q #5 0 0 cm}%
       \wd\ASYbox\z@\dp\ASYbox\z@\ht\ASYbox\z@
-      \box\ASYbox%
+      \box\ASYbox
       \special{pdf:Q}%
     }}
   \let\ASYraw\@firstofone
@@ -85,10 +191,8 @@ Copyright 2008
     \leavevmode
     \setbox\ASYbox=\hbox{#6}%
     \setbox\ASYbox\hbox{%
-      \ASYdimen=\ht\ASYbox
-      \advance\ASYdimen by\dp\ASYbox
       \kern#3\wd\ASYbox
-      \raise#4\ASYdimen\box\ASYbox}%
+      \raise#4\dimexpr\ht\ASYbox+\dp\ASYbox\relax\box\ASYbox}%
     \put(#1,#2){%
       \special{%
         ps:gsave currentpoint currentpoint translate 
@@ -102,6 +206,7 @@ Copyright 2008
     #1
     setmatrix neg exch neg exch translate}
 \fi
+
 \end{filecontents}
 %%%%%%%%%1%%%%%%%%%2%%%%%%%%%3%%%%%%%%%4%%%%%%%%%5
 
@@ -139,7 +244,7 @@ Copyright 2008
      \typeout{%
        -----------------------------------^^J%
        ------------ ASY ERROR ------------^^J}
-     \typeout{\expandafter\strip@prefix\meaning\@tempb\@nil}
+     \typeout{\expandafter\strip@prefix\meaning\@tempb}
      \batchmode
      \end{document}}}
 
@@ -157,27 +262,14 @@ Copyright 2008
 
 %\pdfoutput=0 % uncomment this to enable non-PDF mode
 
-% this would normally be done by an external script:
-\RequirePackage{ifpdf}
-\immediate\write18{%
-  \ifpdf pdf\fi latex 
-    -shell-escape 
-    -interaction=batchmode 
-    -jobname=frf-comp
-    \unexpanded{%
-      "\RequirePackage{asyprocess}\ProcessAsy
-       \documentclass{article}
-       \begin{document}\ShowAsy
-       \end{document}"
-    }}
-
 \documentclass[12pt,twocolumn]{article}
 \usepackage[sc]{mathpazo}
 \usepackage{asyfig}
 \begin{document}
 A boxed graphic:\\
 \fbox{\sffamily\asyfig{frf}}\par
-Note the font in the graphic follows the document font.
+Note the font in the graphic follows 
+the current font of the document.
 \end{document}
 \end{filecontents*}
 
@@ -304,7 +396,25 @@ pdflatex -shell-escape -interaction=batchmode -jobname=$1-comp
   "\RequirePackage{asyprocess}\ProcessAsy
    \documentclass{article}\begin{document}\ShowAsy\end{document}"
 \end{lstlisting}
-Simply change |pdflatex| to |latex| to have \EPS\ graphics produced by Asymptote.
+Simply change |pdflatex| to |latex| to have \EPS\ graphics produced by Asymptote. Note that, at this stage, it is \emph{mandatory} to use the |-comp| suffix for the jobname.
+
+Here's a better script that copes with multiple files:
+\begin{lstlisting}
+#!/bin/bash
+
+for name in "$@"
+do
+  file=`echo ${name} | sed -e 's/\.asy$//'`
+  if [[ ! -e ${file}_.tex ||  ${file}.asy -nt ${file}_.tex ]]
+  then
+    pdflatex -shell-escape -jobname=${file}-comp "\RequirePackage{asyprocess} \ProcessAsy
+ \documentclass{article} \begin{document} \ShowAsy \end{document}"
+    rm ${file}_.pre 
+    rm *.log 
+  fi
+done
+\end{lstlisting}
+I'd like to have an equivalent script for Windows as well and distribute these with the package. I'd probably call them |pdfasyfig| and |epsasyfig| or something similar. 
 
 
 \section{Package information}
@@ -320,11 +430,14 @@ this license is available at: \url{http://www.latex-project.org/lppl.txt}. This 
 {\addtocontents{toc}{\protect\begin{varwidth}[t]{\protect\tocwidthB\protect\linewidth}}}
 \clearpage
 \parindent=0pt
+
 \part{Implementation}
 \section{The asyfig package}
 \DocInput{asyfig.sty}
+
 \section{The asyalign package}
 \DocInput{asyalign.sty}
+
 \section{The asyprocess package}
 \DocInput{asyprocess.sty}
 
