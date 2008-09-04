@@ -1,18 +1,35 @@
 \RequirePackage{filecontents}
 \begin{filecontents*}{README.txt}
 __________________
-The asyfig package
+The ASYFIG package
 
 [Package description goes here.]
 
+____________
+INSTALLATION
+
 Run `latex` on asyfig.tex to produce the files
   asyfig.ins, asyfig.sty, asyalign.sty, asyprocess.sty, and README.txt,
-as well as to compile the PDF documentation. 
+as well as to compile the PDF documentation.
 
-Execute `tex pstool.ins` to produce the files above 
+Execute `tex pstool.ins` to produce the files above
 except pstool.ins (and the PDF file, obviously).
 
-Will Robertson 
+___________
+MAINTENANCE
+
+Please report bugs or request features:
+  <http://wspr.fogbugz.com>
+(Click "TASKS > Enter a New Case")
+
+Developmental and historical versions:
+  <http://github.com/wspr/asyfig>
+
+Current release version:
+  <http://ctan.tug.org/pkg/asyfig>
+
+______________
+Will Robertson
 Copyright 2008
 \end{filecontents*}
 %%%%%%%%%1%%%%%%%%%2%%%%%%%%%3%%%%%%%%%4%%%%%%%%%5
@@ -28,13 +45,16 @@ Copyright 2008
   asyalign,color,ifmtarg,ifpdf,ifplatform,import,
   graphicx,pdftexcmds,suffix,xkeyval}
 
+% Better conditionals than |\newif| provides:
 \def\@True{11}
 \def\@False{01}
+\def\asy@If#1{\if#1\relax\expandafter\@firstoftwo\else\expandafter\@secondoftwo\fi}
+
 \let\asy@always\@False
 \let\asy@never\@False
 \let\asy@process\@False
-\def\asy@If#1{\if#1\relax\expandafter\@firstoftwo\else\expandafter\@secondoftwo\fi}
 
+% Package options:
 \define@choicekey*{asyfig.sty}{process}[\@tempa\@tempb]{all,none,auto}{%
   \ifcase\@tempb\relax
     \let\asy@always\@True
@@ -71,9 +91,13 @@ Copyright 2008
 \def\asy@asyfile{\asy@pathprefix\asy@path\asy@filename.asy}
 \def\asy@texfile{\asy@pathprefix\asy@path\asy@filename\string_.tex}
 
-\newcommand\asyfig[2][]{%
+\def\asy@cmdsep{\ifwindows \string& \else; \fi}
+
+% \subsection{The main macro}
+
+\newcommand\asyfig[1]{%
   \let\asy@path\@empty
-  \asy@splitpath #2/\@nil/%
+  \asy@splitpath #1/\@nil/%
   \IfFileExists{\asy@asyfile}{%
     \asy@If\asy@process{}{%
     \asy@If\asy@always{%
@@ -140,14 +164,13 @@ Copyright 2008
   \let\asy@process\@False
 }
 
-\WithSuffix\newcommand\asyfig*[2][]{%
+% The starred version of \cmd\asyfig\ processes the graphic always:
+\WithSuffix\newcommand\asyfig*[1]{%
   \begingroup
     \let\asy@process\@True
-    \csname\NoSuffixName\asyfig\endcsname[#1]{#2}%
+    \csname\NoSuffixName\asyfig\endcsname{#1}%
   \endgroup
 }
-
-\def\asy@cmdsep{\ifwindows \string& \else; \fi}
 
 \end{filecontents}
 %%%%%%%%%1%%%%%%%%%2%%%%%%%%%3%%%%%%%%%4%%%%%%%%%5
@@ -214,7 +237,7 @@ Copyright 2008
 \ProvidesPackage{asyprocess}
 \nofiles
 
-\RequirePackage{ifpdf,catchfile,ifplatform,color,graphicx}
+\RequirePackage{ifmtarg,ifpdf,catchfile,ifplatform,color,graphicx}
 \RequirePackage[active,tightpage]{preview}
 
 \def\@par@macro{\par}
@@ -223,8 +246,19 @@ Copyright 2008
 
 \edef\@tempa{\detokenize{-comp}}
 \@temptokena{\def\asy@strip@comp#1}
-\expandafter\the\expandafter\@temptokena\@tempa#2\@nil{#1}
-\edef\asy@compname{\expandafter\asy@strip@comp\jobname-comp\@nil}
+\expandafter\the\expandafter\@temptokena\@tempa#2\@nil{%
+  \@ifmtarg{#2}{%
+    \errorstopmode
+    \PackageError{asyprocess}{%
+      The \string\jobname\space of this compilation must end with `-comp'%
+    }{%
+      You must set the \cmd\jobname\ with the equivalent of^^J\space\space
+      pdflatex -jobname=XYZ-comp ...%
+    }
+  }{}%
+  \edef\asy@compname{#1}}
+\expandafter\expandafter\expandafter
+  \asy@strip@comp\expandafter\jobname\@tempa\@nil
 
 \newcommand\ProcessAsy{%
   \immediate\write18{%
@@ -240,7 +274,7 @@ Copyright 2008
       -----------------------------------}%
     \expandafter\@firstofone
   \fi{%
-     \nonstopmode
+     \errorstopmode
      \typeout{%
        -----------------------------------^^J%
        ------------ ASY ERROR ------------^^J}
@@ -260,7 +294,9 @@ Copyright 2008
 
 \begin{filecontents*}{test-asyfig.tex}
 
-%\pdfoutput=0 % uncomment this to enable non-PDF mode
+%%  uncomment this to enable non-PDF mode:
+%\pdfoutput=0 
+%%  (rememer to delete asyfig_.tex if it's previously been generated for PDF mode)
 
 \documentclass[12pt,twocolumn]{article}
 \usepackage[sc]{mathpazo}
@@ -268,13 +304,13 @@ Copyright 2008
 \begin{document}
 A boxed graphic:\\
 \fbox{\sffamily\asyfig{frf}}\par
-Note the font in the graphic follows 
+Note the font in the graphic follows
 the current font of the document.
 \end{document}
+
 \end{filecontents*}
 
 \begin{filecontents*}{frf.asy}
-texpreamble("\usepackage[sc]{mathpazo}");
 unitsize(10mm);
 draw( (0,0){right}..{up}(3,2){down}..
       {down}(4,-2){up}..{right}(7,0) );
@@ -386,10 +422,12 @@ First we need an example Asymptote graphic. This package is distributed with one
 Material within |texpreamble| is \emph{not} used in the final typesetting of the labels; it is purely for the `proof' graphic that is produced before the graphic is integrated within the main document.
 
 \paragraph{Inserting the graphic} 
-After processing (see the next step), this graphic can be included in the document with the \cmd\asyfig\arg{graphic name} command. It does \emph{not} take any option arguments like a regular graphic (cf.~\cmd\includegraphics) to affect the scaling or rotation of the graphic; you are expected to produce the figure in the correct size and orientation within Asymptote.
+After processing (see the next step), this graphic can be included in the document with the \cmd\asyfig\arg{graphic name} command. In the case of the example, this would be |\asyfig{frf}|. It does \emph{not} take any option arguments like a regular graphic to affect the scaling or rotation of the graphic (cf.~\cmd\includegraphics); you are expected to produce the figure in the correct size and orientation within Asymptote.
 
 \paragraph{Processing the graphic}
-But before the graphic can be inserted it must be processed (in the future I might make this an automatic option within the package).  The processing is performed by the \pkg{asyprocess} package in an auxiliary \LaTeX\ execution. Here is the shell script, called (say) |asyprocess|, that I use to do this: (so figure processing would be `|asyprocess frf|' in this example)
+But before the graphic can be inserted it must be processed.  If the graphic has not yet been processed, then an auxiliary compilation will be launched to process the graphic automatically. However, the primary feature of this package is that figures may be processed independently of the main document in order to be able to rapidly iterate changes to the graphic.
+
+This processing is performed by the \pkg{asyprocess} package in an auxiliary \LaTeX\ execution. Here is the shell script, called (say) |asyprocess|, that I use to do this: (so figure processing would be `|asyprocess frf|' in the running example)
 \begin{lstlisting}
 #!/bin/sh
 pdflatex -shell-escape -interaction=batchmode -jobname=$1-comp 
@@ -407,8 +445,7 @@ do
   file=`echo ${name} | sed -e 's/\.asy$//'`
   if [[ ! -e ${file}_.tex ||  ${file}.asy -nt ${file}_.tex ]]
   then
-    pdflatex -shell-escape -jobname=${file}-comp "\RequirePackage{asyprocess} \ProcessAsy
- \documentclass{article} \begin{document} \ShowAsy \end{document}"
+    pdflatex -shell-escape -jobname=${file}-comp "\RequirePackage{asyprocess} \ProcessAsy \documentclass{article} \begin{document} \ShowAsy \end{document}"
     rm ${file}_.pre 
     rm *.log 
   fi
@@ -418,7 +455,7 @@ I'd like to have an equivalent script for Windows as well and distribute these w
 
 
 \section{Package information}
-The most recent publicly released version of \pkg{asyfig} will be available at \textsc{CTAN}:\\
+The most recent publicly released version of \pkg{asyfig} is (or will be) available from \textsc{CTAN}:\\
 \centerline{\url{http://tug.ctan.org/pkg/asyfig/}}\\ 
 Historical and developmental versions are available at GitHub:\\ \centerline{\url{http://github.com/wspr/asyfig/}}\\
 While general feedback at \url{wspr81@gmail.com} is welcomed, specific bugs should be reported through the bug tracker at FogBugz: \url{https://wspr.fogbugz.com/} (click `\textsc{tasks}: Enter a New Case').
