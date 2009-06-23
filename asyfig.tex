@@ -3,7 +3,7 @@
 __________________
 The ASYFIG package
 
-[Package description goes here.]
+This package provides an alternative to the asymptote package for including Asymptote graphics in a LaTeX document. In this package, all Asymptote figures are defined \emph{separately} from the source in their own individual ".asy" files. This package uses Asymptote's inline mode so that labels in the graphics are produced by the main typesetting run; this ensures consistent font and size selection of text within the graphics. In addition, each individual ".asy" graphic can be very quickly processed individually to facilitate easy maintenance and editing of the graphics.
 
 ____________
 INSTALLATION
@@ -19,8 +19,7 @@ ___________
 MAINTENANCE
 
 Please report bugs or request features:
-  <http://wspr.fogbugz.com>
-(Click "TASKS > Enter a New Case")
+  <http://github.com/wspr/asyfig/issues>
 
 Developmental and historical versions:
   <http://github.com/wspr/asyfig>
@@ -30,12 +29,12 @@ Current release version:
 
 ______________
 Will Robertson
-Copyright 2008
+Copyright 2008-2009
 \end{filecontents*}
 %%%%%%%%%1%%%%%%%%%2%%%%%%%%%3%%%%%%%%%4%%%%%%%%%5
 
 \begin{filecontents}{asyfig.sty}
-\ProvidesPackage{asyfig}[2008/08/30 v0.1
+\ProvidesPackage{asyfig}[2009/06/23 v0.1a
   Commands for using asymptote figures]
 
 % This package is the main user interface for inserting external |asy| figures
@@ -71,7 +70,7 @@ Copyright 2008
 
 \def\asy@splitpath#1/#2/{%
 % Recursive macro that is used like\\
-% \qquad |\asy@splitpath abc/def/ghi.asy/@nil/|\\
+% \qquad |\asy@splitpath abc/def/ghi.asy/\@nil/|\\
 % It defines |\asy@filename| $\to$ |ghi.asy| and |\asy@path| $\to$ |abc/def/|
   \ifx\@nil#2\relax
 % If input is \<anything>|/\@nil/| then we've reached the end:
@@ -181,7 +180,7 @@ Copyright 2008
 \begin{filecontents}{asyalign.sty}
 \ProvidesPackage{asyalign}
 
-% This package provides code for placing Asymptote labels inline in \LaTeX\ documents. It is adapted from code that is usually included within Aymptote's \<filename>|_.pre| file, which provides a \LaTeX\ preamble for |asy| processing; this preamble is skipped with the ]pkg{asyfig} package since all figures inherit the preamble from that of the main document.
+% This package provides code for placing Asymptote labels inline in \LaTeX\ documents. It is adapted from code that is usually included within Aymptote's \<filename>|_.pre| file, which provides a \LaTeX\ preamble for |asy| processing; this preamble is skipped with the \pkg{asyfig} package since all figures inherit the preamble from that of the main document.
 
 \RequirePackage{ifpdf}
 
@@ -269,7 +268,7 @@ Copyright 2008
   \ifx\@tempb\@par@macro
     \expandafter\@gobble
   \else
-    \g@addto@macro\@tempb{^^J%
+    \g@addto@macro\@tempb{^^J^^J%
       ------------ ASY ERROR ------------^^J%
       -----------------------------------}%
     \expandafter\@firstofone
@@ -406,9 +405,9 @@ This suite of packages provides an alternate method of including stand-alone Aym
 \part{User documentation}
 
 \section{Introduction}
-Asymptote (or |asy|) is a vector graphics programming language inspired by MetaPost but based around an extended C-like language and full support for 3\textsc{d} bezier curves. Asymptote uses an auxiliary \LaTeX\ process to typeset its labels, and figures can be either generated as stand-alone graphics or in an `inline' form in which labels get placed by the main typesetting process at the figure is inserted into a document.
+Asymptote (or |asy|) is a vector graphics programming language inspired by MetaPost but based around an extended C-like language and full support for 3\textsc{d} bezier curves. Asymptote uses an auxiliary \LaTeX\ process to typeset its labels, and figures can be either generated as stand-alone graphics or in an `inline' form in which labels get placed by the main typesetting process as the figure is inserted into a document.
 
-Support for |asy| in a \LaTeX\ document is provided by the \pkg{asymptote} package, which defines the |\begin{asy}| environment in which |asy| figures may be directly typed. In this case, the source file contains the conplete specification for the text and graphics in the document. However, for large documents it can be quite inconvenient to maintain |asy| graphics that are inline with the document source, because the whole document requires two compilations before any changes in the graphic can be visualised.
+Support for |asy| in a \LaTeX\ document is provided by the \pkg{asymptote} package, which defines the |\begin{asy}| environment in which |asy| figures may be directly typed. In this case, the source file contains the complete specification for the text and graphics in the document. However, for large documents it can be quite inconvenient to maintain |asy| graphics that are inline with the document source, because the whole document requires two compilations before any changes in the graphic can be visualised.
 
 This package, \pkg{asyfig}, provides an alternative, whereby all |asy| figures are defined \emph{separately} from the source in their own individual |.asy| files. \pkg{asyfig} uses Asymptote's inline mode so that labels in the graphics are produced by the main typesetting run; this ensures consistent font and size selection of text within the graphics. In addition, each individual |.asy| graphic can be very quickly processed individually to facilitate easy maintenance and editing of the graphics.
 
@@ -424,44 +423,29 @@ Material within |texpreamble| is \emph{not} used in the final typesetting of the
 \paragraph{Inserting the graphic} 
 After processing (see the next step), this graphic can be included in the document with the \cmd\asyfig\arg{graphic name} command. In the case of the example, this would be |\asyfig{frf}|. It does \emph{not} take any option arguments like a regular graphic to affect the scaling or rotation of the graphic (cf.~\cmd\includegraphics); you are expected to produce the figure in the correct size and orientation within Asymptote.
 
-\paragraph{Processing the graphic}
-But before the graphic can be inserted it must be processed.  If the graphic has not yet been processed, then an auxiliary compilation will be launched to process the graphic automatically. However, the primary feature of this package is that figures may be processed independently of the main document in order to be able to rapidly iterate changes to the graphic.
+If all of your |.asy| files take a common path prefix (such as |./figures/asy/|), this can be defined with the \cmd\asypath\marg{path} command. For example, instead of writing |\asyfig{asy/frf}| one can write |\asypath{asy/}| somewhere in the document (usually the preamble) and then later |\asyfig{frf}|.
 
-This processing is performed by the \pkg{asyprocess} package in an auxiliary \LaTeX\ execution. Here is the shell script, called (say) |asyprocess|, that I use to do this: (so figure processing would be `|asyprocess frf|' in the running example)
+\paragraph{Processing the graphic}
+But before the graphic can be placed into the document it must be processed. If the \texttt{asy} graphic has not been processed, or if the \texttt{asy} file is \emph{newer} than its processed graphic, then this package will attempt to do the processing automatically. To turn off this automatic processing, load the package with the \texttt{[process=none]} package option. Alternatively, to re-process \emph{all} \texttt{asy} graphics, use \texttt{[process=none]} instead.
+
+The primary feature of this package is that figures may be processed independently of the main document in order to be able to rapidly iterate changes to the graphic. This processing is performed by the \pkg{asyprocess} package in an auxiliary \LaTeX\ execution. Here is a basic shell script that I use to do this:
 \begin{lstlisting}
 #!/bin/sh
 pdflatex -shell-escape -interaction=batchmode -jobname=$1-comp 
   "\RequirePackage{asyprocess}\ProcessAsy
    \documentclass{article}\begin{document}\ShowAsy\end{document}"
 \end{lstlisting}
-Simply change |pdflatex| to |latex| to have \EPS\ graphics produced by Asymptote. Note that, at this stage, it is \emph{mandatory} to use the |-comp| suffix for the jobname.
+Simply change |pdflatex| to |latex| to have \EPS\ graphics produced by Asymptote. Note that it is \emph{mandatory} to use the |-comp| suffix for the jobname.
 
-Here's a better script that copes with multiple files:
-\begin{lstlisting}
-#!/bin/bash
-
-for name in "$@"
-do
-  file=`echo ${name} | sed -e 's/\.asy$//'`
-  if [[ ! -e ${file}_.tex ||  ${file}.asy -nt ${file}_.tex ]]
-  then
-    pdflatex -shell-escape -jobname=${file}-comp "\RequirePackage{asyprocess} \ProcessAsy \documentclass{article} \begin{document} \ShowAsy \end{document}"
-    rm ${file}_.pre 
-    rm *.log 
-  fi
-done
-\end{lstlisting}
-I'd like to have an equivalent script for Windows as well and distribute these with the package. I'd probably call them |pdfasyfig| and |epsasyfig| or something similar. 
-
+By saving the script above into (say) |asyprocess| and making it executable, an individual \texttt{asy} graphic can be processed by running (following from the running example) `|asyprocess frf|'.
 
 \section{Package information}
-The most recent publicly released version of \pkg{asyfig} is (or will be) available from \textsc{CTAN}:\\
+The most recent publicly released version of \pkg{asyfig} is available from \textsc{ctan}:\\
 \centerline{\url{http://tug.ctan.org/pkg/asyfig/}}\\ 
 Historical and developmental versions are available at GitHub:\\ \centerline{\url{http://github.com/wspr/asyfig/}}\\
-While general feedback at \url{wspr81@gmail.com} is welcomed, specific bugs should be reported through the bug tracker at FogBugz: \url{https://wspr.fogbugz.com/} (click `\textsc{tasks}: Enter a New Case').
+While general feedback at \url{wspr81@gmail.com} is welcomed, specific bugs should be reported through the issue tracker at GitHub: \url{http://github.com/wspr/asyfig/issues}.
 
-This package is freely modifiable and distributable under the terms and conditions of the \LaTeX\ Project Public Licence, version 1.3c or greater (your choice). The latest version of
-this license is available at: \url{http://www.latex-project.org/lppl.txt}. This work is maintained by \textsc{Will Robertson}.
+This package is freely modifiable and distributable under the terms and conditions of the \LaTeX\ Project Public Licence, version 1.3c or greater (your choice). The latest version of this license is available at: \url{http://www.latex-project.org/lppl.txt}. This work is maintained by \textsc{Will Robertson}.
 
 {\addtocontents{toc}{\protect\end{varwidth}\protect\hfill}}
 {\addtocontents{toc}{\protect\begin{varwidth}[t]{\protect\tocwidthB\protect\linewidth}}}
