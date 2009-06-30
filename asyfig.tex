@@ -2,8 +2,20 @@
 \begin{filecontents*}{README.txt}
 __________________
 The ASYFIG package
+v0.1b
 
 This package provides an alternative to the asymptote package for including Asymptote graphics in a LaTeX document. In this package, all Asymptote figures are defined separately from the source in their own individual ".asy" files. This package uses Asymptote's inline mode so that labels in the graphics are produced by the main typesetting run; this ensures consistent font and size selection of text within the graphics. In addition, each individual ".asy" graphic can be very quickly processed individually to facilitate easy maintenance and editing of the graphics.
+
+______________
+CHANGE HISTORY
+
+v0.1b
+ - Now supports Asymptote v1.78 (an internal macro was
+   changed that needed to be mirrored in this package)
+ 
+v0.1a
+ - Initial public release after Asymptote was added to
+   CTAN and TeX Live
 
 ____________
 INSTALLATION
@@ -34,7 +46,7 @@ Copyright 2008-2009
 %%%%%%%%%1%%%%%%%%%2%%%%%%%%%3%%%%%%%%%4%%%%%%%%%5
 
 \begin{filecontents}{asyfig.sty}
-\ProvidesPackage{asyfig}[2009/06/23 v0.1a
+\ProvidesPackage{asyfig}[2009/06/30 v0.1b
   Commands for using asymptote figures]
 
 % This package is the main user interface for inserting external |asy| figures
@@ -187,46 +199,78 @@ Copyright 2008-2009
 \newbox\ASYbox
 \newdimen\ASYdimen
 
-\def\ASYbase#1#2{%
-  \setbox\ASYbox=\hbox{#1}%
+\long\def\ASYbase#1#2{%
+  \leavevmode
+  \setbox\ASYbox\hbox{#1}%
   \ASYdimen=\ht\ASYbox
-  \setbox\ASYbox=\hbox{#2}%
-  \lower\ASYdimen\box\ASYbox}
+  \setbox\ASYbox\hbox{#2}%
+  \lower\ASYdimen\box\ASYbox
+}
 
 \ifpdf
-  \def\ASYalign(#1,#2)(#3,#4)#5#6{%
+
+  \long\def\ASYaligned(#1,#2)(#3,#4)#5#6#7{%
     \leavevmode
-    \setbox\ASYbox=\hbox{#6}%
+    \setbox\ASYbox\hbox{#7}%
     \setbox\ASYbox\hbox{%
+      \ASYdimen\ht\ASYbox
+      \advance\ASYdimen\dp\ASYbox
       \kern#3\wd\ASYbox
-      \raise#4\dimexpr\ht\ASYbox+\dp\ASYbox\relax\box\ASYbox}%
-    \put(#1,#2){%
-      \special{pdf:q #5 0 0 cm}%
-      \wd\ASYbox\z@\dp\ASYbox\z@\ht\ASYbox\z@
+      \raise#4\ASYdimen
       \box\ASYbox
+    }%
+    \put(#1,#2){%
+      #5\wd\ASYbox 0pt\dp\ASYbox 0pt\ht\ASYbox 0pt\box\ASYbox#6%
+    }%
+  }
+  
+  \long\def\ASYalignT(#1,#2)(#3,#4)#5#6{%
+    \ASYaligned(#1,#2)(#3,#4){%
+      \special{pdf:q #5 0 0 cm}%
+    }{%
       \special{pdf:Q}%
-    }}
+    }{#6}%
+  }
+  
+  \long\def\ASYalign(#1,#2)(#3,#4)#5{\ASYaligned(#1,#2)(#3,#4){}{}{#5}}
+
   \let\ASYraw\@firstofone
 
 \else
-  \def\ASYalign(#1,#2)(#3,#4)#5#6{%
+
+  \long\def\ASYaligned(#1,#2)(#3,#4)#5#6#7{%
     \leavevmode
-    \setbox\ASYbox=\hbox{#6}%
+    \setbox\ASYbox\hbox{#7}%
     \setbox\ASYbox\hbox{%
+      \ASYdimen\ht\ASYbox%
+      \advance\ASYdimen\dp\ASYbox
       \kern#3\wd\ASYbox
-      \raise#4\dimexpr\ht\ASYbox+\dp\ASYbox\relax\box\ASYbox}%
-    \put(#1,#2){%
+      \raise#4\ASYdimen
+      \box\ASYbox
+    }%
+    \put(#1,#2){#5\wd\ASYbox 0pt\dp\ASYbox 0pt\ht\ASYbox 0pt\box\ASYbox#6}%
+  }
+  
+  \long\def\ASYalignT(#1,#2)(#3,#4)#5#6{%
+    \ASYaligned(#1,#2)(#3,#4){%
       \special{%
         ps:gsave currentpoint currentpoint translate 
-        [#5 0 0] concat neg exch neg exch translate}%
-      \box\ASYbox
+        [#5 0 0] concat neg exch neg exch translate%
+      }%
+    }{%
       \special{ps:currentpoint grestore moveto}%
-    }}
+    }{#6}%
+  }
+  
+  \long\def\ASYalign(#1,#2)(#3,#4)#5{\ASYaligned(#1,#2)(#3,#4){}{}{#5}}
+
   \def\ASYraw#1{%
     currentpoint currentpoint translate matrix currentmatrix
     100 12 div -100 12 div scale
     #1
-    setmatrix neg exch neg exch translate}
+    setmatrix neg exch neg exch translate%
+  }
+  
 \fi
 
 \end{filecontents}
@@ -410,6 +454,8 @@ Asymptote (or |asy|) is a vector graphics programming language inspired by MetaP
 Support for |asy| in a \LaTeX\ document is provided by the \pkg{asymptote} package, which defines the |\begin{asy}| environment in which |asy| figures may be directly typed. In this case, the source file contains the complete specification for the text and graphics in the document. However, for large documents it can be quite inconvenient to maintain |asy| graphics that are inline with the document source, because the whole document requires two compilations before any changes in the graphic can be visualised.
 
 This package, \pkg{asyfig}, provides an alternative, whereby all |asy| figures are defined \emph{separately} from the source in their own individual |.asy| files. \pkg{asyfig} uses Asymptote's inline mode so that labels in the graphics are produced by the main typesetting run; this ensures consistent font and size selection of text within the graphics. In addition, each individual |.asy| graphic can be very quickly processed individually to facilitate easy maintenance and editing of the graphics.
+
+This package works with Asymptote v1.78 (and later, probably).
 
 \section{Getting started}
 

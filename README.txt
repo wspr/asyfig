@@ -1,7 +1,19 @@
 __________________
 The ASYFIG package
+v0.1b
 
 This package provides an alternative to the asymptote package for including Asymptote graphics in a LaTeX document. In this package, all Asymptote figures are defined separately from the source in their own individual ".asy" files. This package uses Asymptote's inline mode so that labels in the graphics are produced by the main typesetting run; this ensures consistent font and size selection of text within the graphics. In addition, each individual ".asy" graphic can be very quickly processed individually to facilitate easy maintenance and editing of the graphics.
+
+______________
+CHANGE HISTORY
+
+v0.1b
+ - Now supports Asymptote v1.78 (an internal macro was
+   changed that needed to be mirrored in this package)
+
+v0.1a
+ - Initial public release after Asymptote was added to
+   CTAN and TeX Live
 
 ____________
 INSTALLATION
