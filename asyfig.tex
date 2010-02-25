@@ -2,12 +2,15 @@
 \begin{filecontents*}{README.txt}
 __________________
 The ASYFIG package
-v0.1b
+v0.1c
 
 This package provides an alternative to the asymptote package for including Asymptote graphics in a LaTeX document. In this package, all Asymptote figures are defined separately from the source in their own individual ".asy" files. This package uses Asymptote's inline mode so that labels in the graphics are produced by the main typesetting run; this ensures consistent font and size selection of text within the graphics. In addition, each individual ".asy" graphic can be very quickly processed individually to facilitate easy maintenance and editing of the graphics.
 
 ______________
 CHANGE HISTORY
+
+v0.1c
+ - Added \asyProcessPreamble
 
 v0.1b
  - Now supports Asymptote v1.78 (an internal macro was
@@ -46,7 +49,7 @@ Copyright 2008-2009
 %%%%%%%%%1%%%%%%%%%2%%%%%%%%%3%%%%%%%%%4%%%%%%%%%5
 
 \begin{filecontents}{asyfig.sty}
-\ProvidesPackage{asyfig}[2009/06/30 v0.1b
+\ProvidesPackage{asyfig}[2010/02/24 v0.1c
   Commands for using asymptote figures]
 
 % This package is the main user interface for inserting external |asy| figures
@@ -104,6 +107,12 @@ Copyright 2008-2009
 
 \def\asy@cmdsep{\ifwindows \string& \else; \fi}
 
+% Allow the user to set the processing preamble.
+
+\newcommand\asyProcessPreamble{%
+  \documentclass{article}
+}
+
 % \subsection{The main macro}
 
 \newcommand\asyfig[1]{%
@@ -154,12 +163,10 @@ Copyright 2008-2009
           -shell-escape 
           -interaction=batchmode 
           -jobname=\asy@filename-comp
-        \unexpanded{%
-          "\RequirePackage{asyprocess}\ProcessAsy
-           \documentclass{article}
-           \begin{document}\ShowAsy
-           \end{document}"
-        }%
+        \unexpanded{"\RequirePackage{asyprocess}\ProcessAsy}
+        \expandafter\unexpanded\expandafter{\asyProcessPreamble}
+        \unexpanded{\begin{document}\ShowAsy}
+        \unexpanded{\end{document}"}
         \asy@cmdsep
         echo "^^J==== ASY END PROCESS ===^^J"
       }%
@@ -344,6 +351,16 @@ Copyright 2008-2009
 \documentclass[12pt,twocolumn]{article}
 \usepackage[sc]{mathpazo}
 \usepackage{asyfig}
+\renewcommand\asyProcessPreamble{
+    \documentclass{article}
+
+% macro definitions in \asyProcessPreamble need not be identical to the
+% ``real'' definitions, but the better they are, the better Asymptote can
+% estimate their final size.
+
+    \newcommand\myItalics{\bf}
+}
+\newcommand\myItalics{\it}
 \begin{document}
 A boxed graphic:\\
 \fbox{\sffamily\asyfig{frf}}\par
@@ -358,7 +375,7 @@ unitsize(10mm);
 draw( (0,0){right}..{up}(3,2){down}..
       {down}(4,-2){up}..{right}(7,0) );
 draw( "Resonance" , align=E, (3,2) );
-draw( "Anti-resonance" , align=W, (4,-2) );
+draw( "{\myItalics Anti-resonance}" , align=W, (4,-2) );
 \end{filecontents*}
 
 
@@ -474,6 +491,15 @@ If all of your |.asy| files take a common path prefix (such as |./figures/asy/|)
 \paragraph{Processing the graphic}
 But before the graphic can be placed into the document it must be processed. If the \texttt{asy} graphic has not been processed, or if the \texttt{asy} file is \emph{newer} than its processed graphic, then this package will attempt to do the processing automatically. To turn off this automatic processing, load the package with the \texttt{[process=none]} package option. Alternatively, to re-process \emph{all} \texttt{asy} graphics, use \texttt{[process=all]} instead.
 
+By default, the graphic is processed using the \texttt{article} class.  If you are using a different class or have special macros that you use in your figure labels, you may want to redefine |\asyProcessPreamble| so Asymptote knows how big labels are going to be, etc.  You could accomplish the same thing with \texttt{texpreamble} in your |.asy| files, but |\asyProcessPreamble| lets you place that code in your document preamble.
+\begin{lstlisting}
+\usepackage{asyfig}
+\renewcomannd\asyProcessPreamble{
+  \documentclass{memoir}
+  \newcommand\fancyLabel{\large\it}
+}
+\end{lstlisting}
+
 The primary feature of this package is that figures may be processed independently of the main document in order to be able to rapidly iterate changes to the graphic. This processing is performed by the \pkg{asyprocess} package in an auxiliary \LaTeX\ execution. Here is a basic shell script that I use to do this:
 \begin{lstlisting}
 #!/bin/sh
@@ -481,7 +507,7 @@ pdflatex -shell-escape -interaction=batchmode -jobname=$1-comp
   "\RequirePackage{asyprocess}\ProcessAsy
    \documentclass{article}\begin{document}\ShowAsy\end{document}"
 \end{lstlisting}
-Simply change |pdflatex| to |latex| to have \EPS\ graphics produced by Asymptote. Note that it is \emph{mandatory} to use the |-comp| suffix for the jobname.
+Simply change |pdflatex| to |latex| to have \EPS\ graphics produced by Asymptote. Note that it is \emph{mandatory} to use the |-comp| suffix for the jobname.  Of course, the same preamble tweaking discussed for |\asyProcessPreamble| can apply here as well.
 
 By saving the script above into (say) |asyprocess| and making it executable, an individual \texttt{asy} graphic can be processed by running (following from the running example) `|asyprocess frf|'.
 
