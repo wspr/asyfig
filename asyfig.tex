@@ -107,7 +107,8 @@ Copyright 2008-2009
 
 \def\asy@cmdsep{\ifwindows \string& \else; \fi}
 
-% Allow the user to set the processing preamble.
+% Allow the user to set the processing preamble, using the
+% \texttt{article} class as the default.
 
 \newcommand\asyProcessPreamble{%
   \documentclass{article}
@@ -351,6 +352,14 @@ Copyright 2008-2009
 \documentclass[12pt,twocolumn]{article}
 \usepackage[sc]{mathpazo}
 \usepackage{asyfig}
+
+% If you're going to be defining macros with arguments inside
+% |\asyProcessPreamble|, you'll need to temporarily change the \#
+% character to be a letter (catcode 11).  it's usually a parameter
+% (catcode 6), but to the main \LaTeX run a parameter \# would look
+% like an invalid |\asyProcessPreamble| parameter.
+
+\catcode`\#=11
 \renewcommand\asyProcessPreamble{
     \documentclass{article}
 
@@ -358,9 +367,11 @@ Copyright 2008-2009
 % ``real'' definitions, but the better they are, the better Asymptote can
 % estimate their final size.
 
-    \newcommand\myItalics{\bf}
+    \newcommand\myLabel[1]{\textbf{#1}}
 }
-\newcommand\myItalics{\it}
+\catcode`\#=6
+
+\newcommand\myLabel[1]{\textit{#1}}
 \begin{document}
 A boxed graphic:\\
 \fbox{\sffamily\asyfig{frf}}\par
@@ -375,7 +386,7 @@ unitsize(10mm);
 draw( (0,0){right}..{up}(3,2){down}..
       {down}(4,-2){up}..{right}(7,0) );
 draw( "Resonance" , align=E, (3,2) );
-draw( "{\myItalics Anti-resonance}" , align=W, (4,-2) );
+draw( "{\myLabel{Anti-resonance}}" , align=W, (4,-2) );
 \end{filecontents*}
 
 
