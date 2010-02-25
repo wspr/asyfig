@@ -164,8 +164,8 @@ Copyright 2008-2009
           -shell-escape 
           -interaction=batchmode 
           -jobname=\asy@filename-comp
-        \unexpanded{"\RequirePackage{asyprocess}\ProcessAsy}
-        \expandafter\unexpanded\expandafter{\asyProcessPreamble}
+        "\expandafter\unexpanded\expandafter{\asyProcessPreamble}
+        \unexpanded{\usepackage{asyprocess}\ProcessAsy}
         \unexpanded{\begin{document}\ShowAsy}
         \unexpanded{\end{document}"}
         \asy@cmdsep
@@ -389,8 +389,41 @@ draw( "Resonance" , align=E, (3,2) );
 draw( "{\myLabel{Anti-resonance}}" , align=W, (4,-2) );
 \end{filecontents*}
 
+\begin{filecontents*}{asyprocess.sh}
+#!/bin/sh
+#
+# Process Asymptote files externally for asyfig inclusion.
+#
+# usage: asyprocess [OPTIONS] -- [ASY-FILE] ...
+#
+# All options are passed directly to LATEX except for:
+# --preamble=STR  the value of which is used for the LaTeX preamble.
+LATEX=pdflatex
+PREAMBLE="\documentclass{article}"
+LATEX_OPTIONS=""
 
+# process options
+while [ "$1" != "--" ] && [ -n "$1" ]; do
+  if [ "${1:0:11}" == "--preamble=" ]; then
+    PREAMBLE="${1:11}"
+  else
+    LATEX_OPTIONS="$LATEX_OPTIONS $1"
+  fi
+  shift
+done
+if [ "$1" == "--" ]; then shift; fi
 
+for file in $*; do
+  echo "Process '$file' with '$LATEX_OPTIONS'"
+  $LATEX -shell-escape -jobname="${file}-comp" -interaction=batchmode \
+    $LATEX_OPTIONS \
+    "$PREAMBLE \usepackage{asyprocess}\ProcessAsy \
+     \begin{document}\ShowAsy\end{document}" || exit 1
+done
+
+exit 0
+\end{filecontents*}
+% $ (close dollar signs, if necessary, from asyprocess.sh for emacs' latex-mode)
 
 % Conditionally compile the documentation & generate the .ins file:
 \providecommand\asyfigCompile{Y}
@@ -499,8 +532,8 @@ After processing (see the next step), this graphic can be included in the docume
 
 If all of your |.asy| files take a common path prefix (such as |./figures/asy/|), this can be defined with the \cmd\asypath\marg{path} command. For example, instead of writing |\asyfig{asy/frf}| one can write |\asypath{asy/}| somewhere in the document (usually the preamble) and then later |\asyfig{frf}|.
 
-\paragraph{Processing the graphic}
-But before the graphic can be placed into the document it must be processed. If the \texttt{asy} graphic has not been processed, or if the \texttt{asy} file is \emph{newer} than its processed graphic, then this package will attempt to do the processing automatically. To turn off this automatic processing, load the package with the \texttt{[process=none]} package option. Alternatively, to re-process \emph{all} \texttt{asy} graphics, use \texttt{[process=all]} instead.
+\paragraph{Processing the graphic automatically}
+But before the graphic can be placed into the document it must be processed. If the \texttt{asy} graphic has not been processed, or if the \texttt{asy} file is \emph{newer} than its processed graphic, then this package will attempt to do the processing automatically.  This may require the \texttt{-shell-escape} option or its equivalent for your flavor of \LaTeX.  To turn off automatic processing, load the package with the \texttt{[process=none]} package option. Alternatively, to re-process \emph{all} \texttt{asy} graphics, use \texttt{[process=all]} instead.
 
 By default, the graphic is processed using the \texttt{article} class.  If you are using a different class or have special macros that you use in your figure labels, you may want to redefine |\asyProcessPreamble| so Asymptote knows how big labels are going to be, etc.  You could accomplish the same thing with \texttt{texpreamble} in your |.asy| files, but |\asyProcessPreamble| lets you place that code in your document preamble.
 \begin{lstlisting}
@@ -511,16 +544,20 @@ By default, the graphic is processed using the \texttt{article} class.  If you a
 }
 \end{lstlisting}
 
-The primary feature of this package is that figures may be processed independently of the main document in order to be able to rapidly iterate changes to the graphic. This processing is performed by the \pkg{asyprocess} package in an auxiliary \LaTeX\ execution. Here is a basic shell script that I use to do this:
-\begin{lstlisting}
-#!/bin/sh
-pdflatex -shell-escape -interaction=batchmode -jobname=$1-comp 
-  "\RequirePackage{asyprocess}\ProcessAsy
-   \documentclass{article}\begin{document}\ShowAsy\end{document}"
-\end{lstlisting}
-Simply change |pdflatex| to |latex| to have \EPS\ graphics produced by Asymptote. Note that it is \emph{mandatory} to use the |-comp| suffix for the jobname.  Of course, the same preamble tweaking discussed for |\asyProcessPreamble| can apply here as well.
+Automatic processing is already an improvement over the stock Asymptote inline mode, which is equivalent to \texttt{[process=all]}.  However, sticking to automatic processing would still require a full document rebuild before you could see the effects of a graphics change.  If you want to tighten the feedback loop a bit more, you can process your graphics externally.
 
-By saving the script above into (say) |asyprocess| and making it executable, an individual \texttt{asy} graphic can be processed by running (following from the running example) `|asyprocess frf|'.
+\paragraph{Processing the graphic externally}
+The primary feature of this package is that figures may be processed independently of the main document in order to be able to rapidly iterate changes to the graphic. This processing is performed by the \pkg{asyprocess} package in an auxiliary \LaTeX\ execution. Here is a basic shell script that I use to do this:
+\lstinputlisting{asyprocess.sh}
+Simply change |pdflatex| to |latex| to have \EPS\ graphics produced by Asymptote. Note that it is \emph{mandatory} to use the |-comp| suffix for the jobname.
+
+By saving the script above into (say) |asyprocess.sh| and making it executable, an individual \texttt{asy} graphic can be processed by running (following from the running example)
+\begin{lstlisting}
+PREAMBLE='\documentclass{article} \newcommand\myLabel[1]{\textbf{#1}}'
+asyprocess.sh --preamble="$PREAMBLE" -- example/frf
+\end{lstlisting}
+% $ (close dollar signs, if necessary, from asyprocess.sh call for emacs' latex-mode)
+The |--preamble| option fills the same role that |\asyProcessPreamble| does for automatic processing.
 
 \section{Package information}
 The most recent publicly released version of \pkg{asyfig} is available from \textsc{ctan}:\\
