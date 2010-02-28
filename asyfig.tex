@@ -2,16 +2,20 @@
 \begin{filecontents*}{README.txt}
 __________________
 The ASYFIG package
-v0.1c
+v0.1d
 
 This package provides an alternative to the asymptote package for including Asymptote graphics in a LaTeX document. In this package, all Asymptote figures are defined separately from the source in their own individual ".asy" files. This package uses Asymptote's inline mode so that labels in the graphics are produced by the main typesetting run; this ensures consistent font and size selection of text within the graphics. In addition, each individual ".asy" graphic can be very quickly processed individually to facilitate easy maintenance and editing of the graphics.
 
 ______________
 CHANGE HISTORY
 
-v0.1c
+v0.1d
  - Added \asyProcessPreamble
 
+v0.1c
+ - Add compilation flags to generate 2D vector output
+   in the case of 3D graphics
+ 
 v0.1b
  - Now supports Asymptote v1.78 (an internal macro was
    changed that needed to be mirrored in this package)
@@ -41,6 +45,11 @@ Developmental and historical versions:
 
 Current release version:
   <http://ctan.tug.org/pkg/asyfig>
+  
+___________
+LICENCE
+
+The asyfig collection of packages are released under the LaTeX Project Public License. More information can be found within the PDF documentation.
 
 ______________
 Will Robertson
@@ -49,7 +58,7 @@ Copyright 2008-2009
 %%%%%%%%%1%%%%%%%%%2%%%%%%%%%3%%%%%%%%%4%%%%%%%%%5
 
 \begin{filecontents}{asyfig.sty}
-\ProvidesPackage{asyfig}[2010/02/24 v0.1c
+\ProvidesPackage{asyfig}[2010/02/27 v0.1d
   Commands for using asymptote figures]
 
 % This package is the main user interface for inserting external |asy| figures
@@ -313,7 +322,7 @@ Copyright 2008-2009
 
 \newcommand\ProcessAsy{%
   \immediate\write18{%
-    asy -wait -inlinetex -tex \ifpdf pdf\fi latex 
+    asy -wait -inlinetex -noprc -render 0 -tex \ifpdf pdf\fi latex 
       \asy@compname\space 2> \asy@status}%
   \CatchFileDef{\@tempb}{\asy@status}{}%
   \immediate\write18{\ifwindows del \else rm \fi \asy@status}     
