@@ -476,7 +476,7 @@ After processing (see the next step), this graphic can be included in the docume
 If all of your |.asy| files take a common path prefix (such as |./figures/asy/|), this can be defined with the \cmd\asypath\marg{path} command. For example, instead of writing |\asyfig{asy/frf}| one can write |\asypath{asy/}| somewhere in the document (usually the preamble) and then later |\asyfig{frf}|.
 
 \paragraph{Processing the graphic}
-But before the graphic can be placed into the document it must be processed. If the \texttt{asy} graphic has not been processed, or if the \texttt{asy} file is \emph{newer} than its processed graphic, then this package will attempt to do the processing automatically. To turn off this automatic processing, load the package with the \texttt{[process=none]} package option. Alternatively, to re-process \emph{all} \texttt{asy} graphics, use \texttt{[process=none]} instead.
+But before the graphic can be placed into the document it must be processed. If the \texttt{asy} graphic has not been processed, or if the \texttt{asy} file is \emph{newer} than its processed graphic, then this package will attempt to do the processing automatically. To turn off this automatic processing, load the package with the \texttt{[process=none]} package option. Alternatively, to re-process \emph{all} \texttt{asy} graphics, use \texttt{[process=all]} instead.
 
 The primary feature of this package is that figures may be processed independently of the main document in order to be able to rapidly iterate changes to the graphic. This processing is performed by the \pkg{asyprocess} package in an auxiliary \LaTeX\ execution. Here is a basic shell script that I use to do this:
 \begin{lstlisting}
