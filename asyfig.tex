@@ -525,7 +525,17 @@ Support for |asy| in a \LaTeX\ document is provided by the \pkg{asymptote} packa
 
 This package, \pkg{asyfig}, provides an alternative, whereby all |asy| figures are defined \emph{separately} from the source in their own individual |.asy| files. \pkg{asyfig} uses Asymptote's inline mode so that labels in the graphics are produced by the main typesetting run; this ensures consistent font and size selection of text within the graphics. In addition, each individual |.asy| graphic can be very quickly processed individually to facilitate easy maintenance and editing of the graphics.
 
-This package works with Asymptote v1.78 (and later, probably).
+This package sometimes lags behind the current release of Asymptote simply because I don't use Asymptote very often. The current release of this package is designed to work with Asymptote v1.91 and later.
+
+\section{Do you need this package?}
+
+After I wrote and used this package for quite some time, I realised that what it is intended to do can be done with the standard \pkg{asymptote} package. If you have an Aymptote graphic called |myfig.asy|, you can include it in your document as follows:
+\begin{verbatim}
+\begin{asy}
+include "myfig";
+\end{asy}
+\end{verbatim}
+There's actually not much point using this package if this works for you. But I'll keep supporting this package for now while I continue to use it.
 
 \section{Getting started}
 
@@ -571,6 +581,7 @@ The |--preamble| option fills the same role that |\asyProcessPreamble| does for 
 \section{Package information}
 The most recent publicly released version of \pkg{asyfig} is available from \textsc{ctan}:\\
 \centerline{\url{http://tug.ctan.org/pkg/asyfig/}}\\ 
+\newpage
 Historical and developmental versions are available at GitHub:\\ \centerline{\url{http://github.com/wspr/asyfig/}}\\
 While general feedback at \url{wspr81@gmail.com} is welcomed, specific bugs should be reported through the issue tracker at GitHub: \url{http://github.com/wspr/asyfig/issues}.
 
