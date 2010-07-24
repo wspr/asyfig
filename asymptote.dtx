@@ -91,7 +91,6 @@ Licence: GPL2+
 %    \begin{macrocode}
 \newwrite\AsyStream
 \newwrite\AsyPreStream
-\newread\AsyTestStream
 %    \end{macrocode}
 %
 %    \begin{macrocode}
@@ -401,10 +400,9 @@ Licence: GPL2+
 % 
 %    \begin{macrocode}
 \newcommand{\ASYanimategraphics}[5][]{%
-  \openin\AsyTestStream=_#3.pdf\relax
-  \ifeof\AsyTestStream\else
+  \IfFileExists{_#3.pdf}{%
     \animategraphics[{#1}]{#2}{_#3}{#4}{#5}%
-  \fi
+  }{}
 }
 %    \end{macrocode}
 %
