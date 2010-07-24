@@ -158,11 +158,6 @@ Licence: GPL2+
 %    \end{macrocode}
 % 
 %    \begin{macrocode}
-\def\ASYstringcsnoescape#1{\expandafter\ASYgobbleescape\string#1}
-\def\ASYgobbleescape#1{\ifnum`\\=`#1 \else #1\fi}
-%    \end{macrocode}
-% 
-%    \begin{macrocode}
 \def\WriteAsyLine#1{%
   \immediate\write\AsyStream{\detokenize{#1}}}
 %    \end{macrocode}
