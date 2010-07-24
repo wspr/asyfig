@@ -97,7 +97,6 @@ Licence: GPL2+
 %    \end{macrocode}
 % 
 %    \begin{macrocode}
-\def\makeinnocent#1{\catcode`#1=12 }
 \def\csarg#1#2{\expandafter#1\csname#2\endcsname}
 \newwrite\AsyStream
 \newwrite\AsyPreStream
@@ -147,8 +146,8 @@ Licence: GPL2+
 \def\ProcessAsymptote#1% start it all off
 {\begingroup
   \def\CurrentAsymptote{#1}%
-  \let\do\makeinnocent \dospecials 
-  \makeinnocent\^^L% and whatever other special cases
+  \let\do\@makeother \dospecials 
+  \@makeother\^^L% and whatever other special cases
   \endlinechar`\^^M \catcode`\^^M=12 \xAsymptote}
 {\catcode`\^^M=12 \endlinechar=-1 %
   \gdef\xAsymptote{%
