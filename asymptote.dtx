@@ -246,9 +246,9 @@ Licence: GPL2+
   \ifeof\AsyTestStream
     \ifASYinline
       \PackageWarning{asymptote}{file `\AsyFile.tex' not found}%
-      \closein\AsyTestStream%
+      \closein\AsyTestStream
     \else
-      \closein\AsyTestStream%
+      \closein\AsyTestStream
       \openin\AsyTestStream=\AsyFile.tex
       \ifeof\AsyTestStream
         \ifASYPDF
@@ -260,10 +260,10 @@ Licence: GPL2+
         \catcode`:=12
         \input \AsyFile.tex%
       \fi
-      \closein\AsyTestStream%
+      \closein\AsyTestStream
     \fi
   \else
-    \closein\AsyTestStream%
+    \closein\AsyTestStream
     \ifASYinline
       \catcode`:=12
       \input \AsyFile.tex%
@@ -278,16 +278,16 @@ Licence: GPL2+
          \setbox\ASYbox=\hbox{\includegraphics[hiresbb]{\AsyFile+0}}%
         \fi
         \textattachfile{\AsyFile.pdf}{\phantom{\copy\ASYbox}}%
-        \vskip-\ht\ASYbox%
-        \indent%
-        \box\ASYbox%
-        \closein\AsyTestStream%
+        \vskip-\ht\ASYbox
+        \indent
+        \box\ASYbox
+        \closein\AsyTestStream
       \else
         \includegraphics[hiresbb]{\AsyFile}%
       \fi
     \fi
   \fi
-  \relax%
+  \relax
   \endgroup}
 %    \end{macrocode}
 % 
@@ -327,7 +327,7 @@ Licence: GPL2+
   \ifASYattach
     \global\ASYinlinefalse
   \fi
-  \immediate\write\AsyPreStream%
+  \immediate\write\AsyPreStream
       {\@backslashchar AsyInput{\jobname-\the\c@asy.pre}}
   \immediate\openout\AsyStream=\jobname-\the\c@asy.asy
    \gdef\AsyFile{\Jobname-\the\c@asy}%
@@ -361,7 +361,7 @@ Licence: GPL2+
      \immediate\write\AsyStream{viewportmargin=(2,2);}%
    \fi
   \immediate\write\AsyStream{\globalASYdefs}%
-  \let\ThisAsymptote\WriteAsyLine%
+  \let\ThisAsymptote\WriteAsyLine
   \ProcessAsymptote{asy}%
 }
 %    \end{macrocode}
@@ -369,7 +369,7 @@ Licence: GPL2+
 %    \begin{macrocode}
 \AsymptoteEndDef{asy}
 \def\asydef{%
-  \let\ThisAsymptote\WriteGlobalAsyLine%
+  \let\ThisAsymptote\WriteGlobalAsyLine
   \ProcessAsymptote{asydef}}
 \AsymptoteEndDef{asydef}
 \def\AfterasydefAsymptote{}
@@ -382,10 +382,10 @@ Licence: GPL2+
 %    \begin{macrocode}
 \newcommand{\ASYanimategraphics}[5][]{%
 \openin\AsyTestStream=_#3.pdf
-\ifeof\AsyTestStream%
-\else%
+\ifeof\AsyTestStream
+\else
 \animategraphics[{#1}]{#2}{_#3}{#4}{#5}%
-\fi%
+\fi
 }
 %    \end{macrocode}
 % Work around bug in dvips.def: allow spaces in file names.
@@ -395,7 +395,7 @@ Licence: GPL2+
   \bgroup
   \def\@tempa{!}%                                                               
   \dimen@\Gin@req@width
-  \dimen@ii.1bp%                                                                
+  \dimen@ii.1bp\relax
   \divide\dimen@\dimen@ii
   \@tempdima\Gin@req@height
   \divide\@tempdima\dimen@ii
