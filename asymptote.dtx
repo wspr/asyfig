@@ -158,19 +158,13 @@ Licence: GPL2+
 %    \end{macrocode}
 % 
 %    \begin{macrocode}
-\def\ASYstringmeaning#1{\expandafter\ASYgobblearrow\meaning#1}
 \def\ASYstringcsnoescape#1{\expandafter\ASYgobbleescape\string#1}
-{\escapechar-1
-  \expandafter\expandafter\expandafter\gdef
-  \expandafter\expandafter\expandafter\ASYgobblearrow
-  \expandafter\string\csname macro:->\endcsname{}
-}
 \def\ASYgobbleescape#1{\ifnum`\\=`#1 \else #1\fi}
 %    \end{macrocode}
 % 
 %    \begin{macrocode}
-\def\WriteAsyLine#1{\def\ASYtmp{#1}%
-  \immediate\write\AsyStream{\ASYstringmeaning\ASYtmp}}
+\def\WriteAsyLine#1{%
+  \immediate\write\AsyStream{\detokenize{#1}}}
 %    \end{macrocode}
 % 
 %    \begin{macrocode}
@@ -179,8 +173,8 @@ Licence: GPL2+
   \global\edef#1{\the\toks@ #2}%
 }
 \def\globalASYdefs{}
-\def\WriteGlobalAsyLine#1{\def\ASYtmp{#1^^J}
-\gedefappend\globalASYdefs{\ASYstringmeaning\ASYtmp}}
+\def\WriteGlobalAsyLine#1{%
+\gedefappend\globalASYdefs{\detokenize{#1^^J}}}
 %    \end{macrocode}
 % 
 %    \begin{macrocode}
