@@ -108,7 +108,7 @@ Licence: GPL2+
 \ifeof\AsyTestStream\else
   \input #1
 \fi
-\closein\AsyTestStream%
+\closein\AsyTestStream
 }
 %    \end{macrocode}
 % 
@@ -146,7 +146,7 @@ Licence: GPL2+
   \let\do\@makeother \dospecials 
   \@makeother\^^L% and whatever other special cases
   \endlinechar`\^^M \catcode`\^^M=12 \xAsymptote}
-{\catcode`\^^M=12 \endlinechar=-1 %
+{\catcode`\^^M=12 \endlinechar=-1\relax
   \gdef\xAsymptote{%
     \expandafter\ProcessAsymptoteLine}
   \gdef\ProcessAsymptoteLine#1^^M{\def\test{#1}
@@ -177,9 +177,9 @@ Licence: GPL2+
 \def\gedefappend#1#2{%
   \toks@ = \expandafter{#1}%
   \global\edef#1{\the\toks@ #2}%
-}%
+}
 \def\globalASYdefs{}
-\def\WriteGlobalAsyLine#1{\def\ASYtmp{#1^^J}%
+\def\WriteGlobalAsyLine#1{\def\ASYtmp{#1^^J}
 \gedefappend\globalASYdefs{\ASYstringmeaning\ASYtmp}}
 %    \end{macrocode}
 % 
@@ -289,19 +289,19 @@ Licence: GPL2+
 %    \end{macrocode}
 % 
 %    \begin{macrocode}
-\gdef\ASYwidth{}%
+\gdef\ASYwidth{}
 \define@key{ASYkeys}{width}{%
   \gdef\ASYwidth{#1}%
 }
-\gdef\ASYheight{}%
+\gdef\ASYheight{}
 \define@key{ASYkeys}{height}{%
   \gdef\ASYheight{#1}%
 }
-\gdef\ASYviewportwidth{\ASYdefaultviewportwidth}%
+\gdef\ASYviewportwidth{\ASYdefaultviewportwidth}
 \define@key{ASYkeys}{viewportwidth}{%
   \gdef\ASYviewportwidth{#1}%
 }
-\gdef\ASYviewportheight{}%
+\gdef\ASYviewportheight{}
 \define@key{ASYkeys}{viewportheight}{%
   \gdef\ASYviewportheight{#1}%
 }
