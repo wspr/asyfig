@@ -114,6 +114,11 @@ Licence: GPL2+
     \fi
   \fi
 \fi
+\ifASYPDF
+  \def\AsyExtension{pdf}
+\else
+  \def\AsyExtension{eps}
+\fi
 %    \end{macrocode}
 %
 % \paragraph{Macros}
@@ -357,20 +362,12 @@ Licence: GPL2+
       \@input{\AsyFile.tex}%
     \fi
   \else
-    \ifASYPDF
-      \openin\AsyTestStream=\AsyFile.pdf\relax
-    \else
-      \openin\AsyTestStream=\AsyFile.eps\relax
-    \fi
+    \openin\AsyTestStream=\AsyFile.\AsyExtension\relax
     \ifeof\AsyTestStream
       \closein\AsyTestStream
       \openin\AsyTestStream=\AsyFile.tex\relax
       \ifeof\AsyTestStream
-        \ifASYPDF
-          \PackageWarning{asymptote}{file `\AsyFile.pdf' not found}%
-        \else
-          \PackageWarning{asymptote}{file `\AsyFile.eps' not found}%
-        \fi
+        \PackageWarning{asymptote}{file `\AsyFile.\AsyExtension' not found}%
       \else
         \catcode`:=12
         \@input{\AsyFile.tex}%
