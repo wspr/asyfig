@@ -314,18 +314,21 @@ Licence: GPL2+
 %    \begin{macrocode}
   \ifASYinline
     \openin\AsyTestStream=\AsyFile.tex\relax
+    \ifeof\AsyTestStream
+      \PackageWarning{asymptote}{file `\AsyFile.tex' not found}%
+      \closein\AsyTestStream
+    \else
+      \closein\AsyTestStream
+      \catcode`:=12
+      \@input{\AsyFile.tex}%
+    \fi
   \else
     \ifASYPDF
       \openin\AsyTestStream=\AsyFile.pdf\relax
     \else
       \openin\AsyTestStream=\AsyFile.eps\relax
     \fi
-  \fi
-  \ifeof\AsyTestStream
-    \ifASYinline
-      \PackageWarning{asymptote}{file `\AsyFile.tex' not found}%
-      \closein\AsyTestStream
-    \else
+    \ifeof\AsyTestStream
       \closein\AsyTestStream
       \openin\AsyTestStream=\AsyFile.tex\relax
       \ifeof\AsyTestStream
@@ -339,13 +342,8 @@ Licence: GPL2+
         \@input{\AsyFile.tex}%
       \fi
       \closein\AsyTestStream
-    \fi
-  \else
-    \closein\AsyTestStream
-    \ifASYinline
-      \catcode`:=12
-      \@input{\AsyFile.tex}%
     \else
+      \closein\AsyTestStream
       \ifASYattach
         \ifASYPDF
           \openin\AsyTestStream=\AsyFile+0.pdf\relax
