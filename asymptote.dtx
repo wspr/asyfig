@@ -237,16 +237,10 @@ Licence: GPL2+
 %    \begin{macrocode}
 \def\AfterasyAsymptote{%
   \ifx\ASYwidth\empty
-    \ifx\ASYheight\empty
-    \else
-      \immediate\write\AsyStream{size(0,\ASYheight);}%
-    \fi
-  \else
-    \ifx\ASYheight\empty
-      \immediate\write\AsyStream{size(\ASYwidth,0);}%
-    \else
-      \immediate\write\AsyStream{size(\ASYwidth,\ASYheight);}%
-    \fi
+    \def\ASYwidth{0}
+  \fi
+  \ifx\ASYheight\empty
+    \def\ASYheight{0}
   \fi
   \ifASYattach
     \def\ASYdefaultviewportwidth{0}%
@@ -254,18 +248,13 @@ Licence: GPL2+
     \def\ASYdefaultviewportwidth{\the\linewidth}%
   \fi
   \ifx\ASYviewportwidth\empty
-    \ifx\ASYviewportheight\empty
-    \else
-      \immediate\write\AsyStream{viewportsize=(0,\ASYviewportheight);}%
-    \fi
-  \else
-    \ifx\ASYviewportheight\empty
-      \immediate\write\AsyStream{viewportsize=(\ASYviewportwidth,0);}%
-    \else
-      \immediate\write%
-        \AsyStream{viewportsize=(\ASYviewportwidth,\ASYviewportheight);}%
-    \fi
+    \def\ASYviewportwidth{0}
   \fi
+  \ifx\ASYviewportheight\empty
+    \def\ASYviewportheight{0}
+  \fi
+  \immediate\write\AsyStream{size(\ASYwidth,\ASYheight);}%
+  \immediate\write\AsyStream{viewportsize=(\ASYviewportwidth,\ASYviewportheight);}%
   \gdef\ASYwidth{}%
   \gdef\ASYheight{}%
   \gdef\ASYviewportwidth{\ASYdefaultviewportwidth}%
