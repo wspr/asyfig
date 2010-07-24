@@ -122,15 +122,25 @@ Licence: GPL2+
 % \subsection{Preliminaries}
 % 
 %    \begin{macrocode}
-\def\unquoteJobname#1"#2"#3\relax{\def\rawJobname{#1}%
-  \ifx\rawJobname\empty\def\rawJobname{#2}\fi}
+\def\unquoteJobname#1"#2"#3\relax{%
+  \def\rawJobname{#1}%
+  \ifx\rawJobname\empty
+    \def\rawJobname{#2}%
+  \fi
+}
 \expandafter\unquoteJobname\jobname""\relax
 %    \end{macrocode} 
 % Work around jobname bug in MiKTeX 2.5 and 2.6:
 % Turn stars in file names (resulting from spaces, etc.) into minus signs
 %    \begin{macrocode}
-\def\fixstar#1*#2\relax{\def\argtwo{#2}\ifx\argtwo\empty\gdef\Jobname{#1}\else
-\fixstar#1-#2\relax\fi}
+\def\fixstar#1*#2\relax{%
+  \def\argtwo{#2}%
+  \ifx\argtwo\empty
+    \gdef\Jobname{#1}%
+  \else
+    \fixstar#1-#2\relax
+  \fi
+}
 \expandafter\fixstar\rawJobname*\relax
 %    \end{macrocode}
 % 
@@ -141,7 +151,8 @@ Licence: GPL2+
 % \subsection{Input/Output}
 % 
 %    \begin{macrocode}
-\def\AsyInput#1{\openin\AsyTestStream=#1
+\def\AsyInput#1{%
+  \openin\AsyTestStream=#1
   \ifeof\AsyTestStream\else
     \@input{#1}%
   \fi
@@ -164,33 +175,40 @@ Licence: GPL2+
 % \subsection{Processing macros}
 % 
 %    \begin{macrocode}
-\def\ProcessAsymptote#1% start it all off
-{\begingroup
+\def\ProcessAsymptote#1{%
+  \begingroup
   \def\CurrentAsymptote{#1}%
   \let\do\@makeother \dospecials 
   \@makeother\^^L% and whatever other special cases
-  \endlinechar`\^^M \catcode`\^^M=12 \xAsymptote}
+  \endlinechar`\^^M \catcode`\^^M=12 \xAsymptote
+}
 %    \end{macrocode}
 % 
 %    \begin{macrocode}
 \begingroup
   \catcode`\^^M=12 \endlinechar=-1\relax
   \gdef\xAsymptote{%
-    \expandafter\ProcessAsymptoteLine}
+    \expandafter\ProcessAsymptoteLine
+  }
 %    \end{macrocode}
 % 
 %    \begin{macrocode}
-  \gdef\ProcessAsymptoteLine#1^^M{\def\test{#1}
+  \gdef\ProcessAsymptoteLine#1^^M{%
+    \def\test{#1}
     \csarg\ifx{End\CurrentAsymptote Test}\test
-    \edef\next{\noexpand\EndOfAsymptote{\CurrentAsymptote}}%
-    \else \ThisAsymptote{#1}\let\next\ProcessAsymptoteLine
-    \fi \next}
+      \edef\next{\noexpand\EndOfAsymptote{\CurrentAsymptote}}%
+    \else
+      \ThisAsymptote{#1}\let\next\ProcessAsymptoteLine
+    \fi
+    \next
+  }
 \endgroup
 %    \end{macrocode}
 % 
 %    \begin{macrocode}
 \def\WriteAsyLine#1{%
-  \immediate\write\AsyStream{\detokenize{#1}}}
+  \immediate\write\AsyStream{\detokenize{#1}}%
+}
 %    \end{macrocode}
 % 
 %    \begin{macrocode}
@@ -204,11 +222,16 @@ Licence: GPL2+
 %    \end{macrocode}
 % 
 %    \begin{macrocode}
-\def\EndOfAsymptote#1{\endgroup\end{#1}%
-    \csname After#1Asymptote\endcsname}
-\def\AsymptoteEndDef#1{{\escapechar=-1\relax
+\def\EndOfAsymptote#1{%
+  \endgroup\end{#1}%
+  \csname After#1Asymptote\endcsname
+}
+\def\AsymptoteEndDef#1{%
+  {%
+    \escapechar=-1\relax
     \csarg\xdef{End#1Test}{\string\\end\string\{#1\string\}}%
-  }}
+  }%
+}
 %    \end{macrocode}
 % 
 %    \begin{macrocode}
@@ -305,7 +328,8 @@ Licence: GPL2+
     \fi
   \fi
   \relax
-  \endgroup}
+  \endgroup
+}
 %    \end{macrocode}
 %
 % \subsection{Keys for graphics processing}
@@ -346,8 +370,9 @@ Licence: GPL2+
   \ifASYattach
     \global\ASYinlinefalse
   \fi
-  \immediate\write\AsyPreStream
-      {\@backslashchar AsyInput{\jobname-\the\c@asy.pre}}
+  \immediate\write\AsyPreStream{%
+    \@backslashchar AsyInput{\jobname-\the\c@asy.pre}%
+  }
   \immediate\openout\AsyStream=\jobname-\the\c@asy.asy
   \gdef\AsyFile{\Jobname-\the\c@asy}%
   \immediate\write\AsyStream{if(!settings.multipleView)}%
@@ -388,7 +413,8 @@ Licence: GPL2+
 \AsymptoteEndDef{asy}
 \def\asydef{%
   \let\ThisAsymptote\WriteGlobalAsyLine
-  \ProcessAsymptote{asydef}}
+  \ProcessAsymptote{asydef}%
+}
 \AsymptoteEndDef{asydef}
 \def\AfterasydefAsymptote{}
 %    \end{macrocode}
@@ -421,7 +447,8 @@ Licence: GPL2+
       \ifx\Gin@scalex\@tempa\else rwi=\number\dimen@\space\fi
       \ifx\Gin@scaley\@tempa\else rhi=\number\@tempdima\space\fi
       \ifGin@clip clip\fi}%                                                     
-  \egroup}
+  \egroup
+}
 %    \end{macrocode}
 % 
 % \iffalse
