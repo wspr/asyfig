@@ -327,35 +327,35 @@ Licence: GPL2+
   \immediate\write\AsyPreStream
       {\@backslashchar AsyInput{\jobname-\the\c@asy.pre}}
   \immediate\openout\AsyStream=\jobname-\the\c@asy.asy
-   \gdef\AsyFile{\Jobname-\the\c@asy}%
-   \immediate\write\AsyStream{if(!settings.multipleView)}%
-   \immediate\write\AsyStream{  settings.batchView=false;}%
-   \ifx\XeTeXversion\undefined
-     \ifASYPDF
-       \immediate\write\AsyStream{settings.tex="pdflatex";}%
-     \fi
-   \else
-     \immediate\write\AsyStream{settings.tex="xelatex";}%
-     \ASYPDFtrue
-   \fi
-   \ifASYinline
-     \immediate\write\AsyStream{settings.inlinetex=true;}%
-     \immediate\write\AsyStream{deletepreamble();}%
-   \fi
-   \immediate\write\AsyStream{defaultfilename="\AsyFile";}%
-   \immediate\write\AsyStream{if(settings.render < 0) settings.render=4;}%
-   \ifASYattach
-     \immediate\write\AsyStream{settings.inlineimage=false;}%
-     \immediate\write\AsyStream{settings.embed=false;}%
-     \immediate\write\AsyStream{settings.outformat="pdf";}%
-     \immediate\write\AsyStream{settings.toolbar=true;}%
-   \else
-     \immediate\write\AsyStream{settings.inlineimage=true;}%
-     \immediate\write\AsyStream{settings.embed=true;}%
-     \immediate\write\AsyStream{settings.outformat="";}%
-     \immediate\write\AsyStream{settings.toolbar=false;}%
-     \immediate\write\AsyStream{viewportmargin=(2,2);}%
-   \fi
+  \gdef\AsyFile{\Jobname-\the\c@asy}%
+  \immediate\write\AsyStream{if(!settings.multipleView)}%
+  \immediate\write\AsyStream{  settings.batchView=false;}%
+  \ifx\XeTeXversion\undefined
+    \ifASYPDF
+      \immediate\write\AsyStream{settings.tex="pdflatex";}%
+    \fi
+  \else
+    \immediate\write\AsyStream{settings.tex="xelatex";}%
+    \ASYPDFtrue
+  \fi
+  \ifASYinline
+    \immediate\write\AsyStream{settings.inlinetex=true;}%
+    \immediate\write\AsyStream{deletepreamble();}%
+  \fi
+  \immediate\write\AsyStream{defaultfilename="\AsyFile";}%
+  \immediate\write\AsyStream{if(settings.render < 0) settings.render=4;}%
+  \ifASYattach
+    \immediate\write\AsyStream{settings.inlineimage=false;}%
+    \immediate\write\AsyStream{settings.embed=false;}%
+    \immediate\write\AsyStream{settings.outformat="pdf";}%
+    \immediate\write\AsyStream{settings.toolbar=true;}%
+  \else
+    \immediate\write\AsyStream{settings.inlineimage=true;}%
+    \immediate\write\AsyStream{settings.embed=true;}%
+    \immediate\write\AsyStream{settings.outformat="";}%
+    \immediate\write\AsyStream{settings.toolbar=false;}%
+    \immediate\write\AsyStream{viewportmargin=(2,2);}%
+  \fi
   \immediate\write\AsyStream{\globalASYdefs}%
   \let\ThisAsymptote\WriteAsyLine
   \ProcessAsymptote{asy}%
