@@ -116,6 +116,11 @@ Licence: GPL2+
 \fi
 %    \end{macrocode}
 %
+% \paragraph{Macros}
+%    \begin{macrocode}
+\def\csarg#1#2{\expandafter#1\csname#2\endcsname}
+%    \end{macrocode}
+%
 % \subsection{Package options}
 %
 %    \begin{macrocode}
@@ -124,7 +129,7 @@ Licence: GPL2+
 \ProcessOptions*
 %    \end{macrocode}
 %
-% \subsection{Preliminaries}
+% \subsection{Bug squashing}
 % 
 %    \begin{macrocode}
 \def\unquoteJobname#1"#2"#3\relax{%
@@ -148,9 +153,28 @@ Licence: GPL2+
 }
 \expandafter\fixstar\rawJobname*\relax
 %    \end{macrocode}
-% 
+%
+% Work around bug in dvips.def: allow spaces in file names.
 %    \begin{macrocode}
-\def\csarg#1#2{\expandafter#1\csname#2\endcsname}
+\def\Ginclude@eps#1{%
+  \message{<#1>}%
+  \bgroup
+  \def\@tempa{!}%
+  \dimen@\Gin@req@width
+  \dimen@ii.1bp\relax
+  \divide\dimen@\dimen@ii
+  \@tempdima\Gin@req@height
+  \divide\@tempdima\dimen@ii
+    \special{PSfile=#1\space
+      llx=\Gin@llx\space
+      lly=\Gin@lly\space
+      urx=\Gin@urx\space
+      ury=\Gin@ury\space
+      \ifx\Gin@scalex\@tempa\else rwi=\number\dimen@\space\fi
+      \ifx\Gin@scaley\@tempa\else rhi=\number\@tempdima\space\fi
+      \ifGin@clip clip\fi}%
+  \egroup
+}
 %    \end{macrocode}
 %
 % \subsection{Input/Output}
@@ -167,7 +191,21 @@ Licence: GPL2+
 \AtEndDocument{\immediate\closeout\AsyPreStream}
 %    \end{macrocode}
 %
-% \subsection{Processing macros}
+%    \begin{macrocode}
+\def\WriteAsyLine#1{%
+  \immediate\write\AsyStream{\detokenize{#1}}%
+}
+%    \end{macrocode}
+% 
+%    \begin{macrocode}
+\def\globalASYdefs{}
+\def\WriteGlobalAsyLine#1{%
+  \expandafter\g@addto@macro\expandafter\globalASYdefs\expandafter{\detokenize{#1^^J}}%
+}
+%    \end{macrocode}
+%
+%
+% \subsection{Processing commands}
 % 
 %    \begin{macrocode}
 \def\ProcessAsymptote#1{%
@@ -200,18 +238,6 @@ Licence: GPL2+
 \endgroup
 %    \end{macrocode}
 % 
-%    \begin{macrocode}
-\def\WriteAsyLine#1{%
-  \immediate\write\AsyStream{\detokenize{#1}}%
-}
-%    \end{macrocode}
-% 
-%    \begin{macrocode}
-\def\globalASYdefs{}
-\def\WriteGlobalAsyLine#1{%
-  \expandafter\g@addto@macro\expandafter\globalASYdefs\expandafter{\detokenize{#1^^J}}%
-}
-%    \end{macrocode}
 % 
 %    \begin{macrocode}
 \def\EndOfAsymptote#1{%
@@ -224,6 +250,60 @@ Licence: GPL2+
     \csarg\xdef{End#1Test}{\string\\end\string\{#1\string\}}%
   }%
 }
+%    \end{macrocode}
+% 
+% 
+%    \begin{macrocode}
+\newcommand\asy[1][]{%
+  \begingroup
+  \let\par\empty
+  \stepcounter{asy}%
+  \global\let\ifASYinline\ifASYdefaultinline
+  \global\let\ifASYattach\ifASYdefaultattach
+  \setkeys{ASYkeys}{#1}%
+  \ifASYattach
+    \global\ASYinlinefalse
+  \fi
+  \immediate\write\AsyPreStream{%
+    \noexpand\InputIfFileExists{\jobname-\the\c@asy.pre}%
+  }
+  \immediate\openout\AsyStream=\jobname-\the\c@asy.asy\relax
+  \gdef\AsyFile{\Jobname-\the\c@asy}%
+  \immediate\write\AsyStream{if(!settings.multipleView)}%
+  \immediate\write\AsyStream{  settings.batchView=false;}%
+  \ifxetex
+    \immediate\write\AsyStream{settings.tex="xelatex";}%
+  \else
+    \ifASYPDF
+      \immediate\write\AsyStream{settings.tex="pdflatex";}%
+    \fi
+  \fi
+  \ifASYinline
+    \immediate\write\AsyStream{settings.inlinetex=true;}%
+    \immediate\write\AsyStream{deletepreamble();}%
+  \fi
+  \immediate\write\AsyStream{defaultfilename="\AsyFile";}%
+  \immediate\write\AsyStream{if(settings.render < 0) settings.render=4;}%
+  \ifASYattach
+    \immediate\write\AsyStream{settings.inlineimage=false;}%
+    \immediate\write\AsyStream{settings.embed=false;}%
+    \immediate\write\AsyStream{settings.outformat="pdf";}%
+    \immediate\write\AsyStream{settings.toolbar=true;}%
+  \else
+    \immediate\write\AsyStream{settings.inlineimage=true;}%
+    \immediate\write\AsyStream{settings.embed=true;}%
+    \immediate\write\AsyStream{settings.outformat="";}%
+    \immediate\write\AsyStream{settings.toolbar=false;}%
+    \immediate\write\AsyStream{viewportmargin=(2,2);}%
+  \fi
+  \immediate\write\AsyStream{\globalASYdefs}%
+  \let\ThisAsymptote\WriteAsyLine
+  \ProcessAsymptote{asy}%
+}
+%    \end{macrocode}
+% 
+%    \begin{macrocode}
+\AsymptoteEndDef{asy}
 %    \end{macrocode}
 % 
 %    \begin{macrocode}
@@ -313,6 +393,24 @@ Licence: GPL2+
 }
 %    \end{macrocode}
 %
+%    \begin{macrocode}
+\def\asydef{%
+  \let\ThisAsymptote\WriteGlobalAsyLine
+  \ProcessAsymptote{asydef}%
+}
+\AsymptoteEndDef{asydef}
+\def\AfterasydefAsymptote{}
+%    \end{macrocode}
+% 
+%    \begin{macrocode}
+\newcommand{\ASYanimategraphics}[5][]{%
+  \openin\AsyTestStream=_#3.pdf\relax
+  \ifeof\AsyTestStream\else
+    \animategraphics[{#1}]{#2}{_#3}{#4}{#5}%
+  \fi
+}
+%    \end{macrocode}
+%
 % \subsection{Keys for graphics processing}
 %
 %    \begin{macrocode}
@@ -339,97 +437,7 @@ Licence: GPL2+
   \ifthenelse{\equal{#1}{true}}{\global\ASYinlinetrue}{\global\ASYinlinefalse}%
 }
 %    \end{macrocode}
-% 
-%    \begin{macrocode}
-\newcommand\asy[1][]{%
-  \begingroup
-  \let\par\empty
-  \stepcounter{asy}%
-  \global\let\ifASYinline\ifASYdefaultinline
-  \global\let\ifASYattach\ifASYdefaultattach
-  \setkeys{ASYkeys}{#1}%
-  \ifASYattach
-    \global\ASYinlinefalse
-  \fi
-  \immediate\write\AsyPreStream{%
-    \noexpand\InputIfFileExists{\jobname-\the\c@asy.pre}%
-  }
-  \immediate\openout\AsyStream=\jobname-\the\c@asy.asy\relax
-  \gdef\AsyFile{\Jobname-\the\c@asy}%
-  \immediate\write\AsyStream{if(!settings.multipleView)}%
-  \immediate\write\AsyStream{  settings.batchView=false;}%
-  \ifxetex
-    \immediate\write\AsyStream{settings.tex="xelatex";}%
-  \else
-    \ifASYPDF
-      \immediate\write\AsyStream{settings.tex="pdflatex";}%
-    \fi
-  \fi
-  \ifASYinline
-    \immediate\write\AsyStream{settings.inlinetex=true;}%
-    \immediate\write\AsyStream{deletepreamble();}%
-  \fi
-  \immediate\write\AsyStream{defaultfilename="\AsyFile";}%
-  \immediate\write\AsyStream{if(settings.render < 0) settings.render=4;}%
-  \ifASYattach
-    \immediate\write\AsyStream{settings.inlineimage=false;}%
-    \immediate\write\AsyStream{settings.embed=false;}%
-    \immediate\write\AsyStream{settings.outformat="pdf";}%
-    \immediate\write\AsyStream{settings.toolbar=true;}%
-  \else
-    \immediate\write\AsyStream{settings.inlineimage=true;}%
-    \immediate\write\AsyStream{settings.embed=true;}%
-    \immediate\write\AsyStream{settings.outformat="";}%
-    \immediate\write\AsyStream{settings.toolbar=false;}%
-    \immediate\write\AsyStream{viewportmargin=(2,2);}%
-  \fi
-  \immediate\write\AsyStream{\globalASYdefs}%
-  \let\ThisAsymptote\WriteAsyLine
-  \ProcessAsymptote{asy}%
-}
-%    \end{macrocode}
-% 
-%    \begin{macrocode}
-\AsymptoteEndDef{asy}
-\def\asydef{%
-  \let\ThisAsymptote\WriteGlobalAsyLine
-  \ProcessAsymptote{asydef}%
-}
-\AsymptoteEndDef{asydef}
-\def\AfterasydefAsymptote{}
-%    \end{macrocode}
-% 
-% 
-%    \begin{macrocode}
-\newcommand{\ASYanimategraphics}[5][]{%
-  \openin\AsyTestStream=_#3.pdf\relax
-  \ifeof\AsyTestStream\else
-    \animategraphics[{#1}]{#2}{_#3}{#4}{#5}%
-  \fi
-}
-%    \end{macrocode}
-% Work around bug in dvips.def: allow spaces in file names.
-%    \begin{macrocode}
-\def\Ginclude@eps#1{%                                                           
-  \message{<#1>}%
-  \bgroup
-  \def\@tempa{!}%                                                               
-  \dimen@\Gin@req@width
-  \dimen@ii.1bp\relax
-  \divide\dimen@\dimen@ii
-  \@tempdima\Gin@req@height
-  \divide\@tempdima\dimen@ii
-    \special{PSfile=#1\space
-      llx=\Gin@llx\space
-      lly=\Gin@lly\space
-      urx=\Gin@urx\space
-      ury=\Gin@ury\space
-      \ifx\Gin@scalex\@tempa\else rwi=\number\dimen@\space\fi
-      \ifx\Gin@scaley\@tempa\else rhi=\number\@tempdima\space\fi
-      \ifGin@clip clip\fi}%                                                     
-  \egroup
-}
-%    \end{macrocode}
+%
 % 
 % \iffalse
 %</pkg>
