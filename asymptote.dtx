@@ -143,7 +143,7 @@ Licence: GPL2+
 %    \begin{macrocode}
 \def\AsyInput#1{\openin\AsyTestStream=#1
   \ifeof\AsyTestStream\else
-    \input #1
+    \@input{#1}%
   \fi
   \closein\AsyTestStream
 }
@@ -275,7 +275,7 @@ Licence: GPL2+
         \fi
       \else
         \catcode`:=12
-        \input \AsyFile.tex%
+        \@input{\AsyFile.tex}%
       \fi
       \closein\AsyTestStream
     \fi
@@ -283,7 +283,7 @@ Licence: GPL2+
     \closein\AsyTestStream
     \ifASYinline
       \catcode`:=12
-      \input \AsyFile.tex%
+      \@input{\AsyFile.tex}%
     \else
       \ifASYattach
         \ifASYPDF
