@@ -396,6 +396,27 @@ Licence: GPL2+
 \AsymptoteEndDef{asydef}
 \def\AfterasydefAsymptote{}
 %    \end{macrocode}
+%
+%    \begin{macrocode}
+\newcommand\asyinclude[2][]{%
+  \begingroup
+  \stepcounter{asy}%
+  \global\let\ifASYinline\ifASYdefaultinline
+  \global\let\ifASYattach\ifASYdefaultattach
+  \setkeys{ASYkeys}{#1}%
+  \ifASYattach
+    \global\ASYinlinefalse
+  \fi
+  \immediate\write\AsyPreStream{%
+    \noexpand\InputIfFileExists{\jobname-\the\c@asy.pre}{}{}%
+  }
+  \asy@write@graphic@header
+  \WriteAsyLine{include "#2";}
+  \asy@finalise@stream
+  \asy@input@graphic
+  \endgroup
+}
+%    \end{macrocode}
 % 
 %    \begin{macrocode}
 \newcommand{\ASYanimategraphics}[5][]{%
