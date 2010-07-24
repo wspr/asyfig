@@ -69,6 +69,13 @@ Licence: GPL2+
 % \iffalse
 %<*pkg>
 % \fi
+%
+%    \begin{macrocode}
+\def\Asymptote{{\tt Asymptote}}
+%    \end{macrocode}
+%
+% \subsection{Allocations}
+%
 %    \begin{macrocode}
 \RequirePackage{keyval}
 \RequirePackage{ifthen}
@@ -76,12 +83,43 @@ Licence: GPL2+
 %    \end{macrocode}
 % 
 %    \begin{macrocode}
+\newbox\ASYbox
+\newcounter{asy}
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\newwrite\AsyStream
+\newwrite\AsyPreStream
+\newread\AsyTestStream
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\newif\ifASYinline
+\newif\ifASYattach
+%    \end{macrocode}
+%
+% \paragraph{Testing for PDF output}
+% Note this is not quite the same as \cs{ifpdf}, since we still want PDF output when using XeTeX.
+%    \begin{macrocode}
+\newif\ifASYPDF
+\ifx\pdfoutput\undefined\else
+  \ifcase\pdfoutput\else
+    \ASYPDFtrue
+  \fi
+\fi
+%    \end{macrocode}
+%
+% \subsection{Package options}
+%
+%    \begin{macrocode}
 \newif\ifASYdefaultinline
 \newif\ifASYdefaultattach
 \DeclareOption{inline}{\ASYdefaultinlinetrue}
 \DeclareOption{attach}{\ASYdefaultattachtrue}
 \ProcessOptions*
 %    \end{macrocode}
+%
+% \subsection{Preliminaries}
 % 
 %    \begin{macrocode}
 \def\unquoteJobname#1"#2"#3\relax{\def\rawJobname{#1}%
@@ -98,10 +136,9 @@ Licence: GPL2+
 % 
 %    \begin{macrocode}
 \def\csarg#1#2{\expandafter#1\csname#2\endcsname}
-\newwrite\AsyStream
-\newwrite\AsyPreStream
-\newread\AsyTestStream
 %    \end{macrocode}
+%
+% \subsection{Input/Output}
 % 
 %    \begin{macrocode}
 \def\AsyInput#1{\openin\AsyTestStream=#1
@@ -119,25 +156,12 @@ Licence: GPL2+
 %    \begin{macrocode}
 \immediate\openout\AsyPreStream=\jobname.pre
 %    \end{macrocode}
-% 
+%
 %    \begin{macrocode}
-\newif\ifASYinline
-\newif\ifASYattach
-\newif\ifASYPDF
+\AtEndDocument{\immediate\closeout\AsyPreStream}
 %    \end{macrocode}
-% 
-%    \begin{macrocode}
-\ifx\pdfoutput\undefined\else
-  \ifcase\pdfoutput\else
-    \ASYPDFtrue
-  \fi
-\fi
-%    \end{macrocode}
-% 
-%    \begin{macrocode}
-\newbox\ASYbox
-\newcounter{asy}
-%    \end{macrocode}
+%
+% \subsection{Processing macros}
 % 
 %    \begin{macrocode}
 \def\ProcessAsymptote#1% start it all off
@@ -276,7 +300,9 @@ Licence: GPL2+
   \relax
   \endgroup}
 %    \end{macrocode}
-% 
+%
+% \subsection{Keys for graphics processing}
+%
 %    \begin{macrocode}
 \gdef\ASYwidth{}
 \define@key{ASYkeys}{width}{%
@@ -360,9 +386,6 @@ Licence: GPL2+
 \def\AfterasydefAsymptote{}
 %    \end{macrocode}
 % 
-%    \begin{macrocode}
-\AtEndDocument{\immediate\closeout\AsyPreStream}
-%    \end{macrocode}
 % 
 %    \begin{macrocode}
 \newcommand{\ASYanimategraphics}[5][]{%
@@ -394,9 +417,6 @@ Licence: GPL2+
   \egroup}
 %    \end{macrocode}
 % 
-%    \begin{macrocode}
-\def\Asymptote{{\tt Asymptote}}
-%    \end{macrocode}
 % \iffalse
 %</pkg>
 % \fi
