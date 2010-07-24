@@ -97,6 +97,8 @@ Licence: GPL2+
 %    \begin{macrocode}
 \newif\ifASYinline
 \newif\ifASYattach
+\newif\ifASYdefaultinline
+\newif\ifASYdefaultattach
 %    \end{macrocode}
 %
 % \paragraph{Testing for PDF output}
@@ -117,8 +119,6 @@ Licence: GPL2+
 % \subsection{Package options}
 %
 %    \begin{macrocode}
-\newif\ifASYdefaultinline
-\newif\ifASYdefaultattach
 \DeclareOption{inline}{\ASYdefaultinlinetrue}
 \DeclareOption{attach}{\ASYdefaultattachtrue}
 \ProcessOptions*
