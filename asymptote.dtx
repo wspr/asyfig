@@ -170,15 +170,22 @@ Licence: GPL2+
   \let\do\@makeother \dospecials 
   \@makeother\^^L% and whatever other special cases
   \endlinechar`\^^M \catcode`\^^M=12 \xAsymptote}
-{\catcode`\^^M=12 \endlinechar=-1\relax
+%    \end{macrocode}
+% 
+%    \begin{macrocode}
+\begingroup
+  \catcode`\^^M=12 \endlinechar=-1\relax
   \gdef\xAsymptote{%
     \expandafter\ProcessAsymptoteLine}
+%    \end{macrocode}
+% 
+%    \begin{macrocode}
   \gdef\ProcessAsymptoteLine#1^^M{\def\test{#1}
     \csarg\ifx{End\CurrentAsymptote Test}\test
     \edef\next{\noexpand\EndOfAsymptote{\CurrentAsymptote}}%
     \else \ThisAsymptote{#1}\let\next\ProcessAsymptoteLine
     \fi \next}
-}
+\endgroup
 %    \end{macrocode}
 % 
 %    \begin{macrocode}
