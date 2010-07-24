@@ -352,47 +352,39 @@ Licence: GPL2+
 %    \begin{macrocode}
 \def\asy@input@graphic{%
   \ifASYinline
-    \openin\AsyTestStream=\AsyFile.tex\relax
-    \ifeof\AsyTestStream
+    \IfFileExists{\AsyFile.tex}{%
       \PackageWarning{asymptote}{file `\AsyFile.tex' not found}%
-      \closein\AsyTestStream
-    \else
-      \closein\AsyTestStream
-      \catcode`:=12
+    }{%
+      \catcode`:=12\relax
       \@input{\AsyFile.tex}%
-    \fi
+    }
   \else
-    \openin\AsyTestStream=\AsyFile.\AsyExtension\relax
-    \ifeof\AsyTestStream
-      \closein\AsyTestStream
-      \openin\AsyTestStream=\AsyFile.tex\relax
-      \ifeof\AsyTestStream
-        \PackageWarning{asymptote}{file `\AsyFile.\AsyExtension' not found}%
-      \else
-        \catcode`:=12
-        \@input{\AsyFile.tex}%
-      \fi
-      \closein\AsyTestStream
-    \else
-      \closein\AsyTestStream
+    \IfFileExists{\AsyFile.\AsyExtension}{%
       \ifASYattach
         \ifASYPDF
-          \openin\AsyTestStream=\AsyFile+0.pdf\relax
-        \fi
-        \ifeof\AsyTestStream
-          \setbox\ASYbox=\hbox{\includegraphics[hiresbb]{\AsyFile}}%
+          \IfFileExists{\AsyFile+0.pdf}{%
+            \setbox\ASYbox=\hbox{\includegraphics[hiresbb]{\AsyFile+0}}%
+          }{%
+            \setbox\ASYbox=\hbox{\includegraphics[hiresbb]{\AsyFile}}%
+          }
         \else
-         \setbox\ASYbox=\hbox{\includegraphics[hiresbb]{\AsyFile+0}}%
+          \setbox\ASYbox=\hbox{\includegraphics[hiresbb]{\AsyFile}}%
         \fi
         \textattachfile{\AsyFile.pdf}{\phantom{\copy\ASYbox}}%
         \vskip-\ht\ASYbox
         \indent
         \box\ASYbox
-        \closein\AsyTestStream
       \else
         \includegraphics[hiresbb]{\AsyFile}%
       \fi
-    \fi
+    }{%
+      \IfFileExists{\AsyFile.tex}{%
+        \catcode`:=12
+        \@input{\AsyFile.tex}%
+      }{%
+        \PackageWarning{asymptote}{file `\AsyFile.\AsyExtension' or `\AsyFile.tex' not found}%
+      }
+    }
   \fi
 }
 
