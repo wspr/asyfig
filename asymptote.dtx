@@ -156,17 +156,7 @@ Licence: GPL2+
 % \subsection{Input/Output}
 % 
 %    \begin{macrocode}
-\def\AsyInput#1{%
-  \openin\AsyTestStream=#1\relax
-  \ifeof\AsyTestStream\else
-    \@input{#1}%
-  \fi
-  \closein\AsyTestStream
-}
-%    \end{macrocode}
-% 
-%    \begin{macrocode}
-\AsyInput{\jobname.pre}
+\InputIfFileExists{\jobname.pre}
 %    \end{macrocode}
 % 
 %    \begin{macrocode}
@@ -362,7 +352,7 @@ Licence: GPL2+
     \global\ASYinlinefalse
   \fi
   \immediate\write\AsyPreStream{%
-    \@backslashchar AsyInput{\jobname-\the\c@asy.pre}%
+    \noexpand\InputIfFileExists{\jobname-\the\c@asy.pre}%
   }
   \immediate\openout\AsyStream=\jobname-\the\c@asy.asy\relax
   \gdef\AsyFile{\Jobname-\the\c@asy}%
