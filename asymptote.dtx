@@ -309,9 +309,43 @@ Licence: GPL2+
 %    \begin{macrocode}
 \def\AfterasyAsymptote{%
   \asy@finalise@stream
+  \asy@input@graphic
+  \relax
+  \endgroup
+}
 %    \end{macrocode}
 % 
 %    \begin{macrocode}
+\def\asy@finalise@stream{%
+  \ifx\ASYwidth\empty
+    \def\ASYwidth{0}%
+  \fi
+  \ifx\ASYheight\empty
+    \def\ASYheight{0}%
+  \fi
+  \ifASYattach
+    \def\ASYdefaultviewportwidth{0}%
+  \else
+    \def\ASYdefaultviewportwidth{\the\linewidth}%
+  \fi
+  \ifx\ASYviewportwidth\empty
+    \def\ASYviewportwidth{0}%
+  \fi
+  \ifx\ASYviewportheight\empty
+    \def\ASYviewportheight{0}%
+  \fi
+  \immediate\write\AsyStream{size(\ASYwidth,\ASYheight);}%
+  \immediate\write\AsyStream{viewportsize=(\ASYviewportwidth,\ASYviewportheight);}%
+  \gdef\ASYwidth{}%
+  \gdef\ASYheight{}%
+  \gdef\ASYviewportwidth{\ASYdefaultviewportwidth}%
+  \gdef\ASYviewportheight{}%
+  \immediate\closeout\AsyStream
+}
+%    \end{macrocode}
+% 
+%    \begin{macrocode}
+\def\asy@input@graphic{%
   \ifASYinline
     \openin\AsyTestStream=\AsyFile.tex\relax
     \ifeof\AsyTestStream
@@ -363,35 +397,6 @@ Licence: GPL2+
       \fi
     \fi
   \fi
-  \relax
-  \endgroup
-}
-
-\def\asy@finalise@stream{%
-  \ifx\ASYwidth\empty
-    \def\ASYwidth{0}%
-  \fi
-  \ifx\ASYheight\empty
-    \def\ASYheight{0}%
-  \fi
-  \ifASYattach
-    \def\ASYdefaultviewportwidth{0}%
-  \else
-    \def\ASYdefaultviewportwidth{\the\linewidth}%
-  \fi
-  \ifx\ASYviewportwidth\empty
-    \def\ASYviewportwidth{0}%
-  \fi
-  \ifx\ASYviewportheight\empty
-    \def\ASYviewportheight{0}%
-  \fi
-  \immediate\write\AsyStream{size(\ASYwidth,\ASYheight);}%
-  \immediate\write\AsyStream{viewportsize=(\ASYviewportwidth,\ASYviewportheight);}%
-  \gdef\ASYwidth{}%
-  \gdef\ASYheight{}%
-  \gdef\ASYviewportwidth{\ASYdefaultviewportwidth}%
-  \gdef\ASYviewportheight{}%
-  \immediate\closeout\AsyStream
 }
 
 %    \end{macrocode}
