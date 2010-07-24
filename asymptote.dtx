@@ -74,6 +74,10 @@ Licence: GPL2+
 \def\Asymptote{{\tt Asymptote}}
 %    \end{macrocode}
 %
+%    \begin{macrocode}
+\InputIfFileExists{\jobname.pre}
+%    \end{macrocode}
+%
 % \subsection{Allocations}
 %
 %    \begin{macrocode}
@@ -184,14 +188,7 @@ Licence: GPL2+
 % \subsection{Input/Output}
 % 
 %    \begin{macrocode}
-\InputIfFileExists{\jobname.pre}
-%    \end{macrocode}
-% 
-%    \begin{macrocode}
 \immediate\openout\AsyPreStream=\jobname.pre\relax
-%    \end{macrocode}
-%
-%    \begin{macrocode}
 \AtEndDocument{\immediate\closeout\AsyPreStream}
 %    \end{macrocode}
 %
@@ -204,12 +201,13 @@ Licence: GPL2+
 %    \begin{macrocode}
 \def\globalASYdefs{}
 \def\WriteGlobalAsyLine#1{%
-  \expandafter\g@addto@macro\expandafter\globalASYdefs\expandafter{\detokenize{#1^^J}}%
+  \expandafter\g@addto@macro
+  \expandafter\globalASYdefs
+  \expandafter{\detokenize{#1^^J}}%
 }
 %    \end{macrocode}
 %
-%
-% \subsection{Processing commands}
+% \subsection{Commands for verbatim processing environments}
 % 
 %    \begin{macrocode}
 \def\ProcessAsymptote#1{%
@@ -256,6 +254,7 @@ Licence: GPL2+
 }
 %    \end{macrocode}
 % 
+% \subsection{User interface}
 % 
 %    \begin{macrocode}
 \newcommand\asy[1][]{%
@@ -271,6 +270,23 @@ Licence: GPL2+
   \immediate\write\AsyPreStream{%
     \noexpand\InputIfFileExists{\jobname-\the\c@asy.pre}%
   }
+  \asy@write@graphic@header
+  \let\ThisAsymptote\WriteAsyLine
+  \ProcessAsymptote{asy}%
+}
+\AsymptoteEndDef{asy}
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\def\AfterasyAsymptote{%
+  \asy@finalise@stream
+  \asy@input@graphic
+  \endgroup
+}
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\def\asy@write@graphic@header{%
   \immediate\openout\AsyStream=\jobname-\the\c@asy.asy\relax
   \gdef\AsyFile{\Jobname-\the\c@asy}%
   \immediate\write\AsyStream{if(!settings.multipleView)}%
@@ -301,23 +317,9 @@ Licence: GPL2+
     \immediate\write\AsyStream{viewportmargin=(2,2);}%
   \fi
   \immediate\write\AsyStream{\globalASYdefs}%
-  \let\ThisAsymptote\WriteAsyLine
-  \ProcessAsymptote{asy}%
 }
 %    \end{macrocode}
-% 
-%    \begin{macrocode}
-\AsymptoteEndDef{asy}
-%    \end{macrocode}
-% 
-%    \begin{macrocode}
-\def\AfterasyAsymptote{%
-  \asy@finalise@stream
-  \asy@input@graphic
-  \endgroup
-}
-%    \end{macrocode}
-% 
+%
 %    \begin{macrocode}
 \def\asy@finalise@stream{%
   \ifx\ASYwidth\empty
@@ -380,12 +382,13 @@ Licence: GPL2+
         \catcode`:=12
         \@input{\AsyFile.tex}%
       }{%
-        \PackageWarning{asymptote}{file `\AsyFile.\AsyExtension' or `\AsyFile.tex' not found}%
+        \PackageWarning{asymptote}{%
+          file `\AsyFile.\AsyExtension' or `\AsyFile.tex' not found%
+        }%
       }
     }
   \fi
 }
-
 %    \end{macrocode}
 %
 %    \begin{macrocode}
@@ -425,10 +428,12 @@ Licence: GPL2+
   \gdef\ASYviewportheight{#1}%
 }
 \define@key{ASYkeys}{attach}[true]{%
-  \ifthenelse{\equal{#1}{true}}{\global\ASYattachtrue}{\global\ASYattachfalse}%
+  \ifthenelse{\equal{#1}{true}}
+    {\global\ASYattachtrue}{\global\ASYattachfalse}%
 }
 \define@key{ASYkeys}{inline}[true]{%
-  \ifthenelse{\equal{#1}{true}}{\global\ASYinlinetrue}{\global\ASYinlinefalse}%
+  \ifthenelse{\equal{#1}{true}}
+    {\global\ASYinlinetrue}{\global\ASYinlinefalse}%
 }
 %    \end{macrocode}
 %
