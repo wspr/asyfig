@@ -199,7 +199,7 @@ Licence: GPL2+
 % 
 %    \begin{macrocode}
   \gdef\ProcessAsymptoteLine#1^^M{%
-    \def\test{#1}
+    \def\test{#1}%
     \csarg\ifx{End\CurrentAsymptote Test}\test
       \edef\next{\noexpand\EndOfAsymptote{\CurrentAsymptote}}%
     \else
@@ -242,10 +242,10 @@ Licence: GPL2+
 %    \begin{macrocode}
 \def\AfterasyAsymptote{%
   \ifx\ASYwidth\empty
-    \def\ASYwidth{0}
+    \def\ASYwidth{0}%
   \fi
   \ifx\ASYheight\empty
-    \def\ASYheight{0}
+    \def\ASYheight{0}%
   \fi
   \ifASYattach
     \def\ASYdefaultviewportwidth{0}%
@@ -253,10 +253,10 @@ Licence: GPL2+
     \def\ASYdefaultviewportwidth{\the\linewidth}%
   \fi
   \ifx\ASYviewportwidth\empty
-    \def\ASYviewportwidth{0}
+    \def\ASYviewportwidth{0}%
   \fi
   \ifx\ASYviewportheight\empty
-    \def\ASYviewportheight{0}
+    \def\ASYviewportheight{0}%
   \fi
   \immediate\write\AsyStream{size(\ASYwidth,\ASYheight);}%
   \immediate\write\AsyStream{viewportsize=(\ASYviewportwidth,\ASYviewportheight);}%
