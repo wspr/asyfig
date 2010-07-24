@@ -75,7 +75,7 @@ Licence: GPL2+
 %    \end{macrocode}
 %
 %    \begin{macrocode}
-\InputIfFileExists{\jobname.pre}
+\InputIfFileExists{\jobname.pre}{}{}
 %    \end{macrocode}
 %
 % \subsection{Allocations}
@@ -221,21 +221,18 @@ Licence: GPL2+
 % 
 %    \begin{macrocode}
 \begingroup
-  \catcode`\^^M=12 \endlinechar=-1\relax
+  \catcode`\^^M=12 \endlinechar=-1\relax%
   \gdef\xAsymptote{%
-    \expandafter\ProcessAsymptoteLine
+    \expandafter\ProcessAsymptoteLine%
   }
-%    \end{macrocode}
-% 
-%    \begin{macrocode}
   \gdef\ProcessAsymptoteLine#1^^M{%
     \def\test{#1}%
-    \csarg\ifx{End\CurrentAsymptote Test}\test
+    \csarg\ifx{End\CurrentAsymptote Test}\test%
       \edef\next{\noexpand\EndOfAsymptote{\CurrentAsymptote}}%
-    \else
-      \ThisAsymptote{#1}\let\next\ProcessAsymptoteLine
-    \fi
-    \next
+    \else%
+      \ThisAsymptote{#1}\let\next\ProcessAsymptoteLine%
+    \fi%
+    \next%
   }
 \endgroup
 %    \end{macrocode}
@@ -268,7 +265,7 @@ Licence: GPL2+
     \global\ASYinlinefalse
   \fi
   \immediate\write\AsyPreStream{%
-    \noexpand\InputIfFileExists{\jobname-\the\c@asy.pre}%
+    \noexpand\InputIfFileExists{\jobname-\the\c@asy.pre}{}{}%
   }
   \asy@write@graphic@header
   \let\ThisAsymptote\WriteAsyLine
