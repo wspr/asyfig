@@ -142,10 +142,10 @@ Licence: GPL2+
 % 
 %    \begin{macrocode}
 \def\AsyInput#1{\openin\AsyTestStream=#1
-\ifeof\AsyTestStream\else
-  \input #1
-\fi
-\closein\AsyTestStream
+  \ifeof\AsyTestStream\else
+    \input #1
+  \fi
+  \closein\AsyTestStream
 }
 %    \end{macrocode}
 % 
@@ -389,16 +389,16 @@ Licence: GPL2+
 % 
 %    \begin{macrocode}
 \newcommand{\ASYanimategraphics}[5][]{%
-\openin\AsyTestStream=_#3.pdf
-\ifeof\AsyTestStream\else
-  \animategraphics[{#1}]{#2}{_#3}{#4}{#5}%
-\fi
+  \openin\AsyTestStream=_#3.pdf
+  \ifeof\AsyTestStream\else
+    \animategraphics[{#1}]{#2}{_#3}{#4}{#5}%
+  \fi
 }
 %    \end{macrocode}
 % Work around bug in dvips.def: allow spaces in file names.
 %    \begin{macrocode}
 \def\Ginclude@eps#1{%                                                           
- \message{<#1>}%                                                                
+  \message{<#1>}%
   \bgroup
   \def\@tempa{!}%                                                               
   \dimen@\Gin@req@width
