@@ -79,6 +79,7 @@ Licence: GPL2+
 %    \begin{macrocode}
 \RequirePackage{keyval}
 \RequirePackage{ifthen}
+\RequirePackage{ifxetex}
 \RequirePackage{color,graphicx}
 %    \end{macrocode}
 % 
@@ -102,9 +103,13 @@ Licence: GPL2+
 % Note this is not quite the same as \cs{ifpdf}, since we still want PDF output when using XeTeX.
 %    \begin{macrocode}
 \newif\ifASYPDF
-\ifx\pdfoutput\undefined\else
-  \ifcase\pdfoutput\else
-    \ASYPDFtrue
+\ifxetex
+  \ASYPDFtrue
+\else
+  \ifx\pdfoutput\undefined\else
+    \ifcase\pdfoutput\else
+      \ASYPDFtrue
+    \fi
   \fi
 \fi
 %    \end{macrocode}
@@ -366,13 +371,12 @@ Licence: GPL2+
   \gdef\AsyFile{\Jobname-\the\c@asy}%
   \immediate\write\AsyStream{if(!settings.multipleView)}%
   \immediate\write\AsyStream{  settings.batchView=false;}%
-  \ifx\XeTeXversion\undefined
+  \ifxetex
+    \immediate\write\AsyStream{settings.tex="xelatex";}%
+  \else
     \ifASYPDF
       \immediate\write\AsyStream{settings.tex="pdflatex";}%
     \fi
-  \else
-    \immediate\write\AsyStream{settings.tex="xelatex";}%
-    \ASYPDFtrue
   \fi
   \ifASYinline
     \immediate\write\AsyStream{settings.inlinetex=true;}%
