@@ -217,13 +217,10 @@ Licence: GPL2+
 %    \end{macrocode}
 % 
 %    \begin{macrocode}
-\def\gedefappend#1#2{%
-  \toks@ = \expandafter{#1}%
-  \global\edef#1{\the\toks@ #2}%
-}
 \def\globalASYdefs{}
 \def\WriteGlobalAsyLine#1{%
-\gedefappend\globalASYdefs{\detokenize{#1^^J}}}
+  \expandafter\g@addto@macro\expandafter\globalASYdefs\expandafter{\detokenize{#1^^J}}%
+}
 %    \end{macrocode}
 % 
 %    \begin{macrocode}
