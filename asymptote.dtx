@@ -127,8 +127,6 @@ Licence: GPL2+
 %    \begin{macrocode}
 \newif\ifASYinline
 \newif\ifASYattach
-\newif\ifASYdefaultinline
-\newif\ifASYdefaultattach
 %    \end{macrocode}
 %
 % \paragraph{Testing for PDF output}
@@ -157,8 +155,8 @@ Licence: GPL2+
 % \subsection{Package options}
 %
 %    \begin{macrocode}
-\DeclareOption{inline}{\ASYdefaultinlinetrue}
-\DeclareOption{attach}{\ASYdefaultattachtrue}
+\DeclareOption{inline}{\ASYinlinetrue}
+\DeclareOption{attach}{\ASYattachtrue}
 \ProcessOptions*
 %    \end{macrocode}
 %
@@ -283,8 +281,6 @@ Licence: GPL2+
   \begingroup
   \let\par\empty
   \stepcounter{asy}%
-  \global\let\ifASYinline\ifASYdefaultinline
-  \global\let\ifASYattach\ifASYdefaultattach
   \setkeys{ASYkeys}{#1}%
   \immediate\write\AsyPreStream{%
     \noexpand\InputIfFileExists{\jobname-\the\c@asy.pre}{}{}%
@@ -423,8 +419,6 @@ Licence: GPL2+
 \newcommand\asyinclude[2][]{%
   \begingroup
   \stepcounter{asy}%
-  \global\let\ifASYinline\ifASYdefaultinline
-  \global\let\ifASYattach\ifASYdefaultattach
   \setkeys{ASYkeys}{#1}%
   \immediate\write\AsyPreStream{%
     \noexpand\InputIfFileExists{\jobname-\the\c@asy.pre}{}{}%
@@ -466,13 +460,13 @@ Licence: GPL2+
 }
 \define@key{ASYkeys}{attach}[true]{%
   \ifthenelse{\equal{#1}{true}}
-    {\global\ASYattachtrue
-     \global\ASYinlinefalse}
-    {\global\ASYattachfalse}%
+    {\ASYattachtrue
+    \ASYinlinefalse}
+    {\ASYattachfalse}%
 }
 \define@key{ASYkeys}{inline}[true]{%
   \ifthenelse{\equal{#1}{true}}
-    {\global\ASYinlinetrue}{\global\ASYinlinefalse}%
+    {\ASYinlinetrue}{\ASYinlinefalse}%
 }
 %    \end{macrocode}
 %
