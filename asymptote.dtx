@@ -371,7 +371,7 @@ Licence: GPL2+
       \PackageWarning{asymptote}{file `\AsyFile.tex' not found}%
     }{%
       \catcode`:=12\relax
-      \@input{\AsyFile.tex}%
+      \@@input\AsyFile.tex\relax
     }
   \else
     \IfFileExists{\AsyFile.\AsyExtension}{%
@@ -395,7 +395,7 @@ Licence: GPL2+
     }{%
       \IfFileExists{\AsyFile.tex}{%
         \catcode`:=12
-        \@input{\AsyFile.tex}%
+        \@@input\AsyFile.tex\relax
       }{%
         \PackageWarning{asymptote}{%
           file `\AsyFile.\AsyExtension' or `\AsyFile.tex' not found%
