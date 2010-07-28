@@ -283,7 +283,9 @@ Licence: GPL2+
   \stepcounter{asy}%
   \setkeys{ASYkeys}{#1}%
   \immediate\write\AsyPreStream{%
-    \noexpand\InputIfFileExists{\jobname-\the\c@asy.pre}{}{}%
+    \noexpand\InputIfFileExists{\jobname-\the\c@asy
+    \ifASYinline _\fi
+    .pre}{}{}%
   }
   \asy@write@graphic@header
   \let\ThisAsymptote\WriteAsyLine
@@ -367,11 +369,11 @@ Licence: GPL2+
 %    \begin{macrocode}
 \def\asy@input@graphic{%
   \ifASYinline
-    \IfFileExists{\AsyFile.tex}{%
+    \IfFileExists{\AsyFile_.tex}{%
       \catcode`:=12\relax
-      \@@input\AsyFile.tex\relax
+      \@@input\AsyFile_.tex\relax
     }{%
-      \PackageWarning{asymptote}{file `\AsyFile.tex' not found}%
+      \PackageWarning{asymptote}{file `\AsyFile_.tex' not found}%
     }
   \else
     \IfFileExists{\AsyFile.\AsyExtension}{%
@@ -393,12 +395,15 @@ Licence: GPL2+
         \includegraphics[hiresbb]{\AsyFile}%
       \fi
     }{%
-      \IfFileExists{\AsyFile.tex}{%
+%    \end{macrocode}
+% I'm not sure why this code branch is here. Is it in case a previous run has generated an inline graphic?
+%    \begin{macrocode}
+      \IfFileExists{\AsyFile_.tex}{%
         \catcode`:=12
-        \@@input\AsyFile.tex\relax
+        \@@input\AsyFile_.tex\relax
       }{%
         \PackageWarning{asymptote}{%
-          file `\AsyFile.\AsyExtension' or `\AsyFile.tex' not found%
+          file `\AsyFile.\AsyExtension' or `\AsyFile_.tex' not found%
         }%
       }
     }
