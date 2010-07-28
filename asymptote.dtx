@@ -286,9 +286,6 @@ Licence: GPL2+
   \global\let\ifASYinline\ifASYdefaultinline
   \global\let\ifASYattach\ifASYdefaultattach
   \setkeys{ASYkeys}{#1}%
-  \ifASYattach
-    \global\ASYinlinefalse
-  \fi
   \immediate\write\AsyPreStream{%
     \noexpand\InputIfFileExists{\jobname-\the\c@asy.pre}{}{}%
   }
@@ -429,9 +426,6 @@ Licence: GPL2+
   \global\let\ifASYinline\ifASYdefaultinline
   \global\let\ifASYattach\ifASYdefaultattach
   \setkeys{ASYkeys}{#1}%
-  \ifASYattach
-    \global\ASYinlinefalse
-  \fi
   \immediate\write\AsyPreStream{%
     \noexpand\InputIfFileExists{\jobname-\the\c@asy.pre}{}{}%
   }
@@ -472,7 +466,9 @@ Licence: GPL2+
 }
 \define@key{ASYkeys}{attach}[true]{%
   \ifthenelse{\equal{#1}{true}}
-    {\global\ASYattachtrue}{\global\ASYattachfalse}%
+    {\global\ASYattachtrue
+     \global\ASYinlinefalse}
+    {\global\ASYattachfalse}%
 }
 \define@key{ASYkeys}{inline}[true]{%
   \ifthenelse{\equal{#1}{true}}
