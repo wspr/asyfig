@@ -368,10 +368,10 @@ Licence: GPL2+
 \def\asy@input@graphic{%
   \ifASYinline
     \IfFileExists{\AsyFile.tex}{%
-      \PackageWarning{asymptote}{file `\AsyFile.tex' not found}%
-    }{%
       \catcode`:=12\relax
       \@@input\AsyFile.tex\relax
+    }{%
+      \PackageWarning{asymptote}{file `\AsyFile.tex' not found}%
     }
   \else
     \IfFileExists{\AsyFile.\AsyExtension}{%
