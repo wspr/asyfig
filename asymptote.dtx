@@ -83,8 +83,35 @@ Licence: GPL2+
 %    \begin{macrocode}
 \RequirePackage{keyval}
 \RequirePackage{ifthen}
-\RequirePackage{ifxetex}
 \RequirePackage{color,graphicx}
+%    \end{macrocode}
+%
+% \paragraph{Emulating \textsf{ifpdf} and \textsf{ifxetex}}
+% We cannot assume that Asymptote users have recent \TeX\ distributions. (E.g., Fedora until recently still shipped teTeX.) So load \textsf{ifpdf} and \textsf{ifxetex} if they exist; otherwise, emulate them.
+%
+% In due course, delete this code and just load the packages.
+%    \begin{macrocode}
+\IfFileExists{ifpdf.sty}{
+  \RequirePackage{ifpdf}
+}{
+  \newif\ifpdf
+  \ifx\pdfoutput\@undefined\else
+    \ifcase\pdfoutput\else
+      \pdftrue
+    \fi
+  \fi
+}
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\IfFileExists{ifxetex.sty}{
+  \RequirePackage{ifxetex}
+}{
+  \newif\ifxetex
+  \ifx\XeTeXversion\@undefined\else
+    \xetextrue
+  \fi
+}
 %    \end{macrocode}
 % 
 %    \begin{macrocode}
@@ -111,10 +138,8 @@ Licence: GPL2+
 \ifxetex
   \ASYPDFtrue
 \else
-  \ifx\pdfoutput\undefined\else
-    \ifcase\pdfoutput\else
-      \ASYPDFtrue
-    \fi
+  \ifpdf
+    \ASYPDFtrue
   \fi
 \fi
 \ifASYPDF
