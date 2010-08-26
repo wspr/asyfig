@@ -6,7 +6,7 @@ TEST_PDF = $(addsuffix -pdf.pdf,$(TESTS))
 TEST_DVI = $(addsuffix -dvi.dvi,$(TESTS))
 
 
-test: asymptote.sty clean $(TEST_PDF) $(TEST_DVI)
+test: asymptote.sty clean usage $(TEST_PDF) $(TEST_DVI)
 	make clean
 
 clean:
@@ -18,6 +18,19 @@ asymptote.sty: ../asymptote.sty
 ../asymptote.sty: ../asy-latex.dtx
 	cd ..; tex asy-latex.dtx &> /dev/null;
 
+usage: latexusage.tex
+	echo "Testing PDF output for file 'latexusage'"
+	echo "	Compiling PDF"
+	pdflatex latexusage &> /dev/null
+	echo "	Generating asy graphics"
+	asy latexusage-*.asy
+	echo "	Recompiling PDF"
+	pdflatex latexusage &> /dev/null
+	if grep -q "Package asymptote Warning" latexusage.log; \
+		then echo "Failed; investigate latexusage.log" && false; fi
+	echo "Test for 'latexusage' passed."	
+	echo "  "	
+
 %-pdf.pdf: %.ltx
 	echo "Testing PDF output for test '$*'"
 	echo "	Compiling PDF"
@@ -28,6 +41,7 @@ asymptote.sty: ../asymptote.sty
 	pdflatex -jobname="$*-pdf" $*.ltx &> /dev/null
 	if grep -q "Package asymptote Warning" $*-pdf.log; \
 		then echo "Failed; investigate $*-pdf.log" && false; fi
+	echo "Test '$*' for PDF passed."	
 	echo "  "
 
 
@@ -41,5 +55,6 @@ asymptote.sty: ../asymptote.sty
 	latex -jobname="$*-dvi" $*.ltx &> /dev/null
 	if grep -q "Package asymptote Warning" $*-dvi.log; \
 		then echo "Failed; investigate $*-dvi.log" && false; fi
+	echo "Test '$*' for DVI passed."	
 	echo "  "
 
