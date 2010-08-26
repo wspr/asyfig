@@ -314,34 +314,34 @@ Licence: GPL2+
 \def\asy@write@graphic@header{%
   \immediate\openout\AsyStream=\jobname-\the\c@asy.asy\relax
   \def\AsyFile{\ASYprefix\Jobname-\the\c@asy}%
-  \immediate\write\AsyStream{if(!settings.multipleView)}%
-  \immediate\write\AsyStream{  settings.batchView=false;}%
-  \ifxetex
-    \immediate\write\AsyStream{settings.tex="xelatex";}%
-  \else
-    \ifASYPDF
-      \immediate\write\AsyStream{settings.tex="pdflatex";}%
+  \immediate\write\AsyStream{%
+    if(!settings.multipleView)^^J%
+    settings.batchView=false;^^J%
+    \ifxetex
+      settings.tex="xelatex";^^J%
+    \else\ifASYPDF
+        settings.tex="pdflatex";^^J%
+    \fi\fi
+    \ifASYinline
+      settings.inlinetex=true;^^J%
+      deletepreamble();^^J%
     \fi
-  \fi
-  \ifASYinline
-    \immediate\write\AsyStream{settings.inlinetex=true;}%
-    \immediate\write\AsyStream{deletepreamble();}%
-  \fi
-  \immediate\write\AsyStream{defaultfilename="\Jobname-\the\c@asy";}%
-  \immediate\write\AsyStream{if(settings.render < 0) settings.render=4;}%
-  \ifASYattach
-    \immediate\write\AsyStream{settings.inlineimage=false;}%
-    \immediate\write\AsyStream{settings.embed=false;}%
-    \immediate\write\AsyStream{settings.outformat="pdf";}%
-    \immediate\write\AsyStream{settings.toolbar=true;}%
-  \else
-    \immediate\write\AsyStream{settings.inlineimage=true;}%
-    \immediate\write\AsyStream{settings.embed=true;}%
-    \immediate\write\AsyStream{settings.outformat="";}%
-    \immediate\write\AsyStream{settings.toolbar=false;}%
-    \immediate\write\AsyStream{viewportmargin=(2,2);}%
-  \fi
-  \immediate\write\AsyStream{\globalASYdefs}%
+    defaultfilename="\Jobname-\the\c@asy";^^J%
+    if(settings.render < 0) settings.render=4;^^J%
+    \ifASYattach
+      settings.inlineimage=false;^^J%
+      settings.embed=false;^^J%
+      settings.outformat="pdf";^^J%
+      settings.toolbar=true;^^J%
+    \else
+      settings.inlineimage=true;^^J%
+      settings.embed=true;^^J%
+      settings.outformat="";^^J%
+      settings.toolbar=false;^^J%
+      viewportmargin=(2,2);^^J%
+    \fi
+    \globalASYdefs
+  }%
 }
 %    \end{macrocode}
 %
@@ -364,8 +364,10 @@ Licence: GPL2+
   \ifx\ASYviewportheight\empty
     \def\ASYviewportheight{0}%
   \fi
-  \immediate\write\AsyStream{size(\ASYwidth,\ASYheight);}%
-  \immediate\write\AsyStream{viewportsize=(\ASYviewportwidth,\ASYviewportheight);}%
+  \immediate\write\AsyStream{%
+    size(\ASYwidth,\ASYheight);^^J%
+    viewportsize=(\ASYviewportwidth,\ASYviewportheight);
+  }%
   \immediate\closeout\AsyStream
 }
 %    \end{macrocode}
