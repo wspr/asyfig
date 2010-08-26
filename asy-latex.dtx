@@ -459,6 +459,13 @@ Licence: GPL2+
 % \subsection{Keys for graphics processing}
 %
 %    \begin{macrocode}
+\newcommand\asysetup[1]{\setkeys{ASYkeys}{#1}}
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\define@key{ASYkeys}{dir}{%
+  \def\asydir{#1}%
+}
 \gdef\ASYwidth{}
 \define@key{ASYkeys}{width}{%
   \gdef\ASYwidth{#1}%
