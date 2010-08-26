@@ -1,7 +1,11 @@
 
 \documentclass{article}
 \usepackage[attach]{asymptote}
-\usepackage{attachfile2}
+\ifpdf
+  \usepackage{attachfile2}
+\else
+  \usepackage[dvips]{attachfile2}
+\fi
 \usepackage{mathpazo}
 \begin{document}
 \errorcontextlines=999
