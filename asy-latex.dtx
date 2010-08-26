@@ -313,7 +313,7 @@ Licence: GPL2+
 %    \begin{macrocode}
 \def\asy@write@graphic@header{%
   \immediate\openout\AsyStream=\jobname-\the\c@asy.asy\relax
-  \def\AsyFile{\ASYprefix\Jobname-\the\c@asy}%
+  \gdef\AsyFile{\ASYprefix\Jobname-\the\c@asy}%
   \immediate\write\AsyStream{%
     if(!settings.multipleView)^^J%
     settings.batchView=false;^^J%
