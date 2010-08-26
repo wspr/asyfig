@@ -376,11 +376,11 @@ Licence: GPL2+
 %    \begin{macrocode}
 \def\asy@input@graphic{%
   \ifASYinline
-    \IfFileExists{\AsyFile_.tex}{%
+    \IfFileExists{\AsyFile.tex}{%
       \catcode`:=12\relax
-      \@@input\AsyFile_.tex\relax
+      \@@input\AsyFile.tex\relax
     }{%
-      \PackageWarning{asymptote}{file `\AsyFile_.tex' not found}%
+      \PackageWarning{asymptote}{file `\AsyFile.tex' not found}%
     }
   \else
     \IfFileExists{\AsyFile.\AsyExtension}{%
@@ -405,12 +405,12 @@ Licence: GPL2+
 %    \end{macrocode}
 % I'm not sure why this code branch is here. Is it in case a previous run has generated an inline graphic?
 %    \begin{macrocode}
-      \IfFileExists{\AsyFile_.tex}{%
+      \IfFileExists{\AsyFile.tex}{%
         \catcode`:=12
-        \@@input\AsyFile_.tex\relax
+        \@@input\AsyFile.tex\relax
       }{%
         \PackageWarning{asymptote}{%
-          file `\AsyFile.\AsyExtension' or `\AsyFile_.tex' not found%
+          file `\AsyFile.\AsyExtension' or `\AsyFile.tex' not found%
         }%
       }
     }
