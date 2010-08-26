@@ -130,6 +130,37 @@ Licence: GPL2+
 \newif\ifASYattach
 %    \end{macrocode}
 %
+% \paragraph{Ensuring attachfile2 is loaded if [attach] is requested}
+%    \begin{macrocode}
+\newif\if@asy@attachfile@loaded
+%    \end{macrocode}
+% 
+%    \begin{macrocode}
+\AtBeginDocument{%
+  \@ifpackageloaded{attachfile2}{\@asy@attachfile@loadedtrue}{}%
+  \let\asy@check@attachfile\asy@check@attachfile@loaded
+}
+%    \end{macrocode}
+% 
+%    \begin{macrocode}
+\newcommand\asy@check@attachfile@loaded{%
+  \if@asy@attachfile@loaded\else
+    \PackageError{asymptote}{You must load the attachfile2 package}{^^J%
+      You have requested the [attach] option for some or all of your^^J%
+      Asymptote graphics, which requires the attachfile2 package.^^J%
+      Please load it in the document preamble.^^J%
+    }%
+  \fi
+}
+%    \end{macrocode}
+% 
+%    \begin{macrocode}
+\newcommand\asy@check@attachfile{%
+  \AtBeginDocument{\asy@check@attachfile@loaded}%
+  \let\asy@check@attachfile\@empty
+}
+%    \end{macrocode}
+%
 % \paragraph{Testing for PDF output}
 % Note this is not quite the same as \cs{ifpdf}, since we still want PDF output when using XeTeX.
 %    \begin{macrocode}
@@ -157,7 +188,7 @@ Licence: GPL2+
 %
 %    \begin{macrocode}
 \DeclareOption{inline}{\ASYinlinetrue}
-\DeclareOption{attach}{\ASYattachtrue}
+\DeclareOption{attach}{\ASYattachtrue\asy@check@attachfile}
 \ProcessOptions*
 %    \end{macrocode}
 %
@@ -483,6 +514,7 @@ Licence: GPL2+
 \define@key{ASYkeys}{attach}[true]{%
   \ifthenelse{\equal{#1}{true}}
     {\ASYattachtrue
+     \asy@check@attachfile
     \ASYinlinefalse}
     {\ASYattachfalse}%
 }
