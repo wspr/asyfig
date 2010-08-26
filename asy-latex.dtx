@@ -95,7 +95,7 @@ Licence: GPL2+
 \IfFileExists{ifpdf.sty}{
   \RequirePackage{ifpdf}
 }{
-  \newif\ifpdf
+  \expandafter\newif\csname ifpdf\endcsname
   \ifx\pdfoutput\@undefined\else
     \ifcase\pdfoutput\else
       \pdftrue
@@ -108,7 +108,7 @@ Licence: GPL2+
 \IfFileExists{ifxetex.sty}{
   \RequirePackage{ifxetex}
 }{
-  \newif\ifxetex
+  \expandafter\newif\csname ifxetex\endcsname
   \ifx\XeTeXversion\@undefined\else
     \xetextrue
   \fi
@@ -289,7 +289,7 @@ Licence: GPL2+
   \stepcounter{asy}%
   \setkeys{ASYkeys}{#1}%
   \ifx\asydir\empty\else
-      \gdef\ASYprefix{\asydir/}
+      \gdef\ASYprefix{\asydir/}%
   \fi
   \immediate\write\AsyPreStream{%
     \noexpand\InputIfFileExists{%
