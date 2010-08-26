@@ -7,23 +7,21 @@ TEST_DVI = $(addsuffix -dvi.dvi,$(TESTS))
 
 
 test: asymptote.sty clean $(TEST_PDF) $(TEST_DVI)
-	make cleanmost
+	make clean
 
 clean:
-	rm -f *.tex *.asy *.pre *.pdf *.eps *.dvi *.log *.aux
-
-cleanmost:
-	rm -f *.tex *.asy *.pre *.log *.aux
+	rm -f -- *-*.tex *.asy *.pre *.pdf *.eps *.dvi *.log *.aux *.out *.prc *.js *.synctex*
 
 asymptote.sty: ../asymptote.sty
+	cp $< $@
 
 ../asymptote.sty: ../asy-latex.dtx
-	cd ..; tex asy-latex.dtx;
+	cd ..; tex asy-latex.dtx &> /dev/null;
 
 %-pdf.pdf: %.ltx
 	echo "Testing PDF output for test '$*'"
 	echo "	Compiling PDF"
-	pdflatex -jobname="$*-pdf" $*.ltx 
+	pdflatex -jobname="$*-pdf" $*.ltx &> /dev/null
 	echo "	Generating asy graphics"
 	asy $*-pdf-*.asy
 	echo "	Recompiling PDF"
