@@ -289,7 +289,7 @@ Licence: GPL2+
   \stepcounter{asy}%
   \setkeys{ASYkeys}{#1}%
   \ifx\asydir\empty\else
-      \gdef\ASYprefix{\asydir/}%
+      \def\ASYprefix{\asydir/}%
   \fi
   \immediate\write\AsyPreStream{%
     \noexpand\InputIfFileExists{%
@@ -313,7 +313,7 @@ Licence: GPL2+
 %    \begin{macrocode}
 \def\asy@write@graphic@header{%
   \immediate\openout\AsyStream=\jobname-\the\c@asy.asy\relax
-  \gdef\AsyFile{\ASYprefix\Jobname-\the\c@asy}%
+  \def\AsyFile{\ASYprefix\Jobname-\the\c@asy}%
   \immediate\write\AsyStream{if(!settings.multipleView)}%
   \immediate\write\AsyStream{  settings.batchView=false;}%
   \ifxetex
@@ -366,10 +366,6 @@ Licence: GPL2+
   \fi
   \immediate\write\AsyStream{size(\ASYwidth,\ASYheight);}%
   \immediate\write\AsyStream{viewportsize=(\ASYviewportwidth,\ASYviewportheight);}%
-  \gdef\ASYwidth{}%
-  \gdef\ASYheight{}%
-  \gdef\ASYviewportwidth{\ASYdefaultviewportwidth}%
-  \gdef\ASYviewportheight{}%
   \immediate\closeout\AsyStream
 }
 %    \end{macrocode}
@@ -434,7 +430,7 @@ Licence: GPL2+
   \stepcounter{asy}%
   \setkeys{ASYkeys}{#1}%
   \ifx\asydir\empty\else
-      \gdef\ASYprefix{\asydir/}
+      \def\ASYprefix{\asydir/}%
   \fi
   \immediate\write\AsyPreStream{%
     \noexpand\InputIfFileExists{%
@@ -466,21 +462,21 @@ Licence: GPL2+
 \define@key{ASYkeys}{dir}{%
   \def\asydir{#1}%
 }
-\gdef\ASYwidth{}
+\def\ASYwidth{}
 \define@key{ASYkeys}{width}{%
-  \gdef\ASYwidth{#1}%
+  \def\ASYwidth{#1}%
 }
-\gdef\ASYheight{}
+\def\ASYheight{}
 \define@key{ASYkeys}{height}{%
-  \gdef\ASYheight{#1}%
+  \def\ASYheight{#1}%
 }
-\gdef\ASYviewportwidth{\ASYdefaultviewportwidth}
+\def\ASYviewportwidth{\ASYdefaultviewportwidth}
 \define@key{ASYkeys}{viewportwidth}{%
-  \gdef\ASYviewportwidth{#1}%
+  \def\ASYviewportwidth{#1}%
 }
-\gdef\ASYviewportheight{}
+\def\ASYviewportheight{}
 \define@key{ASYkeys}{viewportheight}{%
-  \gdef\ASYviewportheight{#1}%
+  \def\ASYviewportheight{#1}%
 }
 \define@key{ASYkeys}{attach}[true]{%
   \ifthenelse{\equal{#1}{true}}
