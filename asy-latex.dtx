@@ -45,7 +45,7 @@ Licence: GPL2+
 \EnableCrossrefs
 \CodelineIndex
 \begin{document}
-  \DocInput{asymptote.dtx}
+  \DocInput{\jobname.dtx}
 \end{document}
 %</driver>
 % \fi
@@ -64,6 +64,58 @@ Licence: GPL2+
 % \tableofcontents
 % 
 % \section{Introduction}
+%
+% This is the documentation for the \LaTeX\ package \texttt{asymptote} which accompanies the Asymptote drawing package. For further details on Asymptote, please see its documentation in \texttt{asymptote.pdf}.
+%
+% \section{User syntax}
+%
+% \subsection{Package loading and options}
+%
+% The package may take two options at load time: \texttt{inline} or \texttt{attach}. These options are mutually exclusive; please don't attempt to use both. The \texttt{inline} option uses Asymptote's `inline' mode whereby included graphics have their labels typeset in the environment of the document they are contained within. Otherwise the Asymptote graphics are self-contained and their formatting is independent of the document.
+%
+% The \texttt{attach} option allows 3D graphics to be embedded within the PDF using the \texttt{attachfile2} package; please load that package separately if you wish to use it. This option requires (at time of writing) PDF output; it cannot be used in a DVI workflow.
+%
+% These options can be set at any time with the \cmd\asysetup\marg{options} command.
+%
+% This package produces quite a number of output files, which by default are created in the same directory as the \LaTeX\ document that is being compiled. To keep things more tidy, you can specify an output directory for these files by defining the \cmd\asydir\ command. For example, if you wish to store the figure files in the subdirectory \texttt{asytmp/}, the you would write \verb|\renewcommand\asydir{asytmp}|.
+%
+% Alternatively (and tentatively), you may write \verb|dir=asytmp| in either the package options or the options to \cmd\asysetup.
+%
+% \subsection{Commands for inserting Asymptote graphics}
+%
+% The main environment defined by the package is the \texttt{asy} environment, in which verbatim Asymptote code is placed that will be compiled for generating a graphic in the document. For example,
+% \begin{verbatim}
+% \begin{figure}
+% \begin{asy}[ <options> ]
+% <ASYMPTOTE CODE>
+% \end{asy}
+% \caption{...}\label{...}
+% \end{verbatim}
+%
+% If you have Asymptote code in a separate file, you can include it with the \cmd\asyinclude\oarg{options}\marg{filename}\ command.
+%
+% For Asymptote code that should be included in \emph{every} graphic, define it using the \texttt{asydef} environment.
+%
+% \subsection{Graphics options}
+%
+% Both the \texttt{asy} environment and the \cmd\asyinclude command take optional parameters for controlling aspects of the graphics creation. In addition to locally setting \texttt{inline} and \texttt{attach}, the following options may also be used:
+% \begin{description}
+% \item[height] Height of the graphic
+% \item[width] Ditto for width
+% \item[viewportheight] not sure yet
+% \item[viewportwidth] Ditto
+% \end{description}
+% These may also be set globally using the \cmd\asysetup\ command.
+%
+% \section{Processing the document}
+%
+% After running \LaTeX\ on the document, it is necessary to process the Asymptote graphics so they can be included in the next compilation. The simplest procedure is a recipe such as
+% \begin{verbatim}
+% pdflatex mydoc
+% asy mydoc-*.asy
+% pdflatex mydoc
+% \end{verbatim}
+% This technique will recompile each graphic every time, however. To only recompile graphics that have changed, use the \texttt{latexmk} tool. (TODO: document how.)
 %
 % \section{Implementation}
 %
