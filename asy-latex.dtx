@@ -1,13 +1,5 @@
 % \iffalse
 %
-%<*driver>
-\ProvidesFile{asy-latex.dtx}
-%</driver>
-%<pkg>\ProvidesPackage{asymptote}
-%<*pkg>
-  [2010/08/26 v1.20 Asymptote style file for LaTeX]
-%</pkg>
-%
 %<*internal>
 \begingroup
 %</internal>
@@ -28,16 +20,25 @@ Licence: GPL2+
 \endpreamble
 \nopostamble
 \askforoverwritefalse
-\generate{\file{\jobname.sty}{\from{\jobname.dtx}{pkg}}}
+\generate{\file{asymptote.sty}{\from{\jobname.dtx}{pkg}}}
 %</batchfile>
 %<batchfile>\endbatchfile
 %<*internal>
 \generate{\file{\jobname.ins}{\from{\jobname.dtx}{batchfile}}}
-\nopreamble\nopostamble
+\edef\tmpa{plain}
+\ifx\tmpa\fmtname\endgroup\expandafter\bye\fi
 \endgroup
 \immediate\write18{makeindex -s gind.ist -o \jobname.ind  \jobname.idx}
 \immediate\write18{makeindex -s gglo.ist -o \jobname.gls  \jobname.glo}
 %</internal>
+%
+%<*driver>
+\ProvidesFile{asy-latex.dtx}
+%</driver>
+%<pkg>\ProvidesPackage{asymptote}
+%<*pkg>
+  [2010/08/26 v1.20 Asymptote style file for LaTeX]
+%</pkg>
 %
 %<*driver>
 \documentclass{ltxdoc}
