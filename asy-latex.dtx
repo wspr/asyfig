@@ -133,13 +133,32 @@ Licence: GPL2+
 %
 % \subsection{Allocations}
 %
+% \paragraph{Allocations}
+% 
+%    \begin{macrocode}
+\newbox\ASYbox
+\newcounter{asy}
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\newwrite\AsyStream
+\newwrite\AsyPreStream
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\newif\ifASYinline
+\newif\ifASYattach
+%    \end{macrocode}
+%
+% \subsection{Packages}
+%
 %    \begin{macrocode}
 \RequirePackage{keyval}
 \RequirePackage{ifthen}
 \RequirePackage{color,graphicx}
 %    \end{macrocode}
 %
-% \paragraph{Emulating \textsf{ifpdf} and \textsf{ifxetex}}
+% \paragraph{Emulating packages}
 % We cannot assume that Asymptote users have recent \TeX\ distributions. (E.g., Fedora until recently still shipped teTeX.) So load \textsf{ifpdf} and \textsf{ifxetex} if they exist; otherwise, emulate them.
 %
 % In due course, delete this code and just load the packages.
@@ -166,20 +185,8 @@ Licence: GPL2+
   \fi
 }
 %    \end{macrocode}
-% 
-%    \begin{macrocode}
-\newbox\ASYbox
-\newcounter{asy}
-%    \end{macrocode}
 %
 %    \begin{macrocode}
-\newwrite\AsyStream
-\newwrite\AsyPreStream
-%    \end{macrocode}
-%
-%    \begin{macrocode}
-\newif\ifASYinline
-\newif\ifASYattach
 %    \end{macrocode}
 %
 % \paragraph{Ensuring attachfile2 is loaded if [attach] is requested}
@@ -213,24 +220,6 @@ Licence: GPL2+
 }
 %    \end{macrocode}
 %
-% \paragraph{Testing for PDF output}
-% Note this is not quite the same as \cs{ifpdf}, since we still want PDF output when using XeTeX.
-%    \begin{macrocode}
-\newif\ifASYPDF
-\ifxetex
-  \ASYPDFtrue
-\else
-  \ifpdf
-    \ASYPDFtrue
-  \fi
-\fi
-\ifASYPDF
-  \def\AsyExtension{pdf}
-\else
-  \def\AsyExtension{eps}
-\fi
-%    \end{macrocode}
-%
 % \paragraph{Macros}
 %    \begin{macrocode}
 \def\csarg#1#2{\expandafter#1\csname#2\endcsname}
@@ -247,6 +236,25 @@ Licence: GPL2+
 %    \begin{macrocode}
 \def\asydir{}
 \def\ASYprefix{}
+%    \end{macrocode}
+%
+%
+% \subsection{Testing for PDF output}
+% Note this is not quite the same as \cs{ifpdf}, since we still want PDF output when using XeTeX.
+%    \begin{macrocode}
+\newif\ifASYPDF
+\ifxetex
+  \ASYPDFtrue
+\else
+  \ifpdf
+    \ASYPDFtrue
+  \fi
+\fi
+\ifASYPDF
+  \def\AsyExtension{pdf}
+\else
+  \def\AsyExtension{eps}
+\fi
 %    \end{macrocode}
 %
 % \subsection{Bug squashing}
