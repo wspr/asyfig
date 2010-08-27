@@ -186,8 +186,27 @@ Licence: GPL2+
 }
 %    \end{macrocode}
 %
+% \begin{macro}{\CatchFileDef}
+% Used for \cmd\asyinclude.
 %    \begin{macrocode}
+\IfFileExists{catchfile.sty}{
+  \RequirePackage{catchfile}
+}{
+  \newcommand\CatchFileDef[3]{%
+    \begingroup
+    \everyeof{%
+      \ENDMARKER
+      \noexpand
+    }%
+    \long\def\@tempa##1\ENDMARKER{%
+      \endgroup
+      \def#1{##1}%
+    }%
+    \expandafter\@tempa\@@input #2\relax
+  }
+}
 %    \end{macrocode}
+% \end{macro}
 %
 % \paragraph{Ensuring attachfile2 is loaded if [attach] is requested}
 %    \begin{macrocode}
@@ -530,7 +549,8 @@ Licence: GPL2+
       \ASYprefix\noexpand\jobname-\the\c@asy.pre}{}{}%
   }
   \asy@write@graphic@header
-  \WriteAsyLine{include "#2";}
+  \CatchFileDef\@tempa{#2}{}
+  \immediate\write\AsyStream{\unexpanded\expandafter{\@tempa}}%
   \asy@finalise@stream
   \asy@input@graphic
   \endgroup
