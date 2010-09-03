@@ -582,19 +582,19 @@ Licence: GPL2+
 }
 \def\ASYwidth{}
 \define@key{ASYkeys}{width}{%
-  \def\ASYwidth{#1}%
+  \edef\ASYwidth{\the\dimexpr#1\relax}%
 }
 \def\ASYheight{}
 \define@key{ASYkeys}{height}{%
-  \def\ASYheight{#1}%
+  \edef\ASYheight{\the\dimexpr#1\relax}%
 }
 \def\ASYviewportwidth{\ASYdefaultviewportwidth}
 \define@key{ASYkeys}{viewportwidth}{%
-  \def\ASYviewportwidth{#1}%
+  \edef\ASYviewportwidth{\the\dimexpr#1\relax}%
 }
 \def\ASYviewportheight{}
 \define@key{ASYkeys}{viewportheight}{%
-  \def\ASYviewportheight{#1}%
+  \edef\ASYviewportheight{\the\dimexpr#1\relax}%
 }
 \define@key{ASYkeys}{attach}[true]{%
   \ifthenelse{\equal{#1}{true}}
