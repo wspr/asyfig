@@ -491,7 +491,7 @@ Licence: GPL2+
       \@@input\AsyFile.tex\relax
     }{%
       \PackageWarning{asymptote}{file `\AsyFile.tex' not found}%
-    }
+    }%
   \else
     \IfFileExists{\AsyFile.\AsyExtension}{%
       \ifASYattach
@@ -500,7 +500,7 @@ Licence: GPL2+
             \setbox\ASYbox=\hbox{\includegraphics[hiresbb]{\AsyFile+0}}%
           }{%
             \setbox\ASYbox=\hbox{\includegraphics[hiresbb]{\AsyFile}}%
-          }
+          }%
         \else
           \setbox\ASYbox=\hbox{\includegraphics[hiresbb]{\AsyFile}}%
         \fi
@@ -522,8 +522,8 @@ Licence: GPL2+
         \PackageWarning{asymptote}{%
           file `\AsyFile.\AsyExtension' or `\AsyFile.tex' not found%
         }%
-      }
-    }
+      }%
+    }%
   \fi
 }
 %    \end{macrocode}
