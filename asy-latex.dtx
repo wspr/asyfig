@@ -358,7 +358,7 @@ Licence: GPL2+
   \endlinechar`\^^M \catcode`\^^M=12 \xAsymptote
 }
 %    \end{macrocode}
-% Need lots of comment chars here because \meta{space} is no longer a space character.
+% Need lots of comment chars here because \meta{line end} is no longer a space character.
 %    \begin{macrocode}
 \begingroup
   \catcode`\^^M=12 \endlinechar=-1\relax%
@@ -366,36 +366,26 @@ Licence: GPL2+
     \expandafter\ProcessAsymptoteLine%
   }
   \gdef\ProcessAsymptoteLine#1^^M{%
-    \def\test{#1}%
-    \csarg\ifx{End\CurrentAsymptote Test}\test%
-      \edef\next{\noexpand\EndOfAsymptote{\CurrentAsymptote}}%
+    \def\@tempa{#1}%
+    {%
+      \escapechar=-1\relax%
+      \xdef\@tempb{\string\\end\string\{\CurrentAsymptote\string\}}%
+    }%
+    \ifx\@tempa\@tempb%
+      \edef\next{\endgroup\noexpand\end{\CurrentAsymptote}}%
     \else%
-      \ThisAsymptote{#1}\let\next\ProcessAsymptoteLine%
+      \ThisAsymptote{#1}%
+      \let\next\ProcessAsymptoteLine%
     \fi%
     \next%
   }
 \endgroup
 %    \end{macrocode}
 % 
-% 
-%    \begin{macrocode}
-\def\EndOfAsymptote#1{%
-  \endgroup\end{#1}%
-  \csname After#1Asymptote\endcsname
-}
-\def\AsymptoteEndDef#1{%
-  {%
-    \escapechar=-1\relax
-    \csarg\xdef{End#1Test}{\string\\end\string\{#1\string\}}%
-  }%
-}
-%    \end{macrocode}
-% 
 % \subsection{User interface}
 % 
 %    \begin{macrocode}
 \newcommand\asy[1][]{%
-  \begingroup
   \let\par\empty
   \stepcounter{asy}%
   \setkeys{ASYkeys}{#1}%
@@ -410,14 +400,12 @@ Licence: GPL2+
   \let\ThisAsymptote\WriteAsyLine
   \ProcessAsymptote{asy}%
 }
-\AsymptoteEndDef{asy}
 %    \end{macrocode}
 %
 %    \begin{macrocode}
-\def\AfterasyAsymptote{%
+\def\endasy{%
   \asy@finalise@stream
   \asy@input@graphic
-  \endgroup
 }
 %    \end{macrocode}
 %
@@ -533,8 +521,6 @@ Licence: GPL2+
   \let\ThisAsymptote\WriteGlobalAsyLine
   \ProcessAsymptote{asydef}%
 }
-\AsymptoteEndDef{asydef}
-\def\AfterasydefAsymptote{}
 %    \end{macrocode}
 %
 %    \begin{macrocode}
