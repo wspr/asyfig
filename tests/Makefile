@@ -3,7 +3,7 @@
 
 TESTS = $(shell ls *.ltx | sed -e 's/.ltx//')
 TEST_PDF = $(addsuffix -pdf.pdf,$(TESTS))
-TEST_DVI = $(addsuffix -dvi.dvi,$(TESTS))
+TEST_DVI = $(addsuffix -dvi.pdf,$(TESTS))
 
 
 test: asymptote.sty clean usage $(TEST_PDF) $(TEST_DVI)
@@ -11,6 +11,9 @@ test: asymptote.sty clean usage $(TEST_PDF) $(TEST_DVI)
 
 clean:
 	rm -f -- *-*.tex *-*.asy *.pre *-*-*.pdf *.eps *-*-*.dvi *.log *.aux *.out *.prc *.js *.synctex* *.atfi
+
+cleanall: clean
+	rm -f -- *.dvi *.pdf
 
 asymptote.sty: ../asymptote.sty
 	cp $< $@
@@ -58,3 +61,8 @@ usage: latexusage.tex
 	echo "Test '$*' for DVI passed."	
 	echo "  "
 
+%-dvi.pdf: %-dvi.ps
+	ps2pdf $*-dvi.ps
+
+%-dvi.ps: %-dvi.dvi
+	dvips $*-dvi.dvi
