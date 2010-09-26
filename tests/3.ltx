@@ -1,14 +1,18 @@
 
 \documentclass{article}
-\usepackage[attach]{asymptote}
-\ifpdf
-  \usepackage{attachfile2}
+\usepackage{ifxetex}
+\ifxetex
+  \typeout{SKIPPING TEST: ATTACH OPTION NOT SUPPORTED BY ASYMPTOTE}
+  \usepackage{asymptote}
 \else
-  \usepackage[dvips]{attachfile2}
+  \usepackage[attach]{asymptote}
+  \ifpdf
+    \usepackage{attachfile2}
+  \else
+    \usepackage[dvips]{attachfile2}
+   \fi
 \fi
-\usepackage{mathpazo}
 \begin{document}
-\errorcontextlines=999
 \begin{asy}
 unitsize(10mm);
 draw( (0,0){right}..{up}(3,2){down}..

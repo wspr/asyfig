@@ -245,6 +245,24 @@ Licence: GPL2+
 \def\csarg#1#2{\expandafter#1\csname#2\endcsname}
 %    \end{macrocode}
 %
+% \subsection{Warnings}
+%
+%    \begin{macrocode}
+\def\asy@warn@attach@xetex@clash{%
+  \PackageWarning{asymptote}{%
+    The [attach] option is not available for XeTeX use
+  }%
+}
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\def\asy@warn@attach@inline@clash#1{%
+  \PackageWarning{asymptote}{%
+    Options "attach" and "inline" cannot be used together. Using "#1"
+  }%
+}
+%    \end{macrocode}
+%
 % \subsection{Package options}
 %
 %    \begin{macrocode}
@@ -269,22 +287,6 @@ Licence: GPL2+
   \fi
 }
 \ProcessOptions*
-%    \end{macrocode}
-%
-%    \begin{macrocode}
-\def\asy@warn@attach@xetex@clash{%
-  \PackageWarning{asymptote}{%
-    The [attach] option is not available for XeTeX use
-  }%
-}
-%    \end{macrocode}
-%
-%    \begin{macrocode}
-\def\asy@warn@attach@inline@clash#1{%
-  \PackageWarning{asymptote}{%
-    Options "attach" and "inline" cannot be used together. Using "#1"
-  }%
-}
 %    \end{macrocode}
 %
 %    \begin{macrocode}
@@ -636,7 +638,7 @@ Licence: GPL2+
   \ifthenelse{\equal{#1}{true}}
     {%
       \ASYinlinetrue
-      \ifASYattachtrue
+      \ifASYattach
         \ASYattachfalse
         \asy@warn@attach@inline@clash{inline}%
       \fi
