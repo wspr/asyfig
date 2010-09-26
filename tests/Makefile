@@ -4,9 +4,9 @@
 TESTS = $(shell ls *.ltx | sed -e 's/.ltx//')
 TEST_PDF = $(addsuffix -pdf.pdf,$(TESTS))
 TEST_DVI = $(addsuffix -dvi.pdf,$(TESTS))
+TEST_XETEX = $(addsuffix -xetex.pdf,$(TESTS))
 
-
-test: asymptote.sty clean usage $(TEST_PDF) $(TEST_DVI)
+test: asymptote.sty clean usage $(TEST_PDF) $(TEST_XETEX) $(TEST_DVI)
 	make clean
 
 clean:
@@ -48,6 +48,19 @@ usage: latexusage.tex
 	echo "  "
 
 
+%-xetex.pdf: %.ltx
+	echo "Testing XeLaTeX output for test '$*'"
+	echo "	Compiling PDF with XeLaTeX"
+	xelatex -jobname="$*-xetex" $*.ltx &> /dev/null
+	echo "	Generating asy graphics"
+	asy $*-xetex-*.asy
+	echo "	Recompiling PDF with XeLaTeX"
+	xelatex -jobname="$*-xetex" $*.ltx &> /dev/null
+	if grep -q "Package asymptote Warning" $*-xetex.log; \
+		then echo "Failed; investigate $*-xetex.log" && false; fi
+	echo "Test '$*' for XeLaTeX passed."	
+	echo "  "
+
 %-dvi.dvi: %.ltx
 	echo "Testing DVI output for test '$*'"
 	echo "	Compiling DVI"
@@ -62,7 +75,7 @@ usage: latexusage.tex
 	echo "  "
 
 %-dvi.pdf: %-dvi.ps
-	ps2pdf $*-dvi.ps
+	ps2pdf $*-dvi.ps &> /dev/null
 
 %-dvi.ps: %-dvi.dvi
-	dvips $*-dvi.dvi
+	dvips $*-dvi.dvi &> /dev/null
