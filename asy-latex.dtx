@@ -426,15 +426,14 @@ Licence: GPL2+
     \fi
     defaultfilename="\Jobname-\the\c@asy";^^J%
     if(settings.render < 0) settings.render=4;^^J%
+    settings.outformat="";^^J%
     \ifASYattach
       settings.inlineimage=false;^^J%
       settings.embed=false;^^J%
-      settings.outformat="pdf";^^J%
       settings.toolbar=true;^^J%
     \else
       settings.inlineimage=true;^^J%
       settings.embed=true;^^J%
-      settings.outformat="";^^J%
       settings.toolbar=false;^^J%
       viewportmargin=(2,2);^^J%
     \fi
@@ -491,7 +490,7 @@ Licence: GPL2+
         \else
           \setbox\ASYbox=\hbox{\includegraphics[hiresbb]{\AsyFile}}%
         \fi
-        \textattachfile{\AsyFile.pdf}{\phantom{\copy\ASYbox}}%
+        \textattachfile{\AsyFile.\AsyExtension}{\phantom{\copy\ASYbox}}%
         \vskip-\ht\ASYbox
         \indent
         \box\ASYbox
