@@ -248,9 +248,43 @@ Licence: GPL2+
 % \subsection{Package options}
 %
 %    \begin{macrocode}
-\DeclareOption{inline}{\ASYinlinetrue}
-\DeclareOption{attach}{\ASYattachtrue\asy@check@attachfile}
+\DeclareOption{inline}{%
+  \ifASYattach
+    \ASYattachfalse
+    \asy@warn@attach@inline@clash{inline}%
+  \fi
+  \ASYinlinetrue
+}
+\DeclareOption{attach}{%
+  \ifxetex
+    \asy@warn@attach@xetex@clash
+  \else
+    \ifASYinline
+      \ASYinlinefalse
+      \asy@warn@attach@inline@clash{attach}%
+    \else
+      \asy@check@attachfile
+    \fi
+    \ASYattachtrue
+  \fi
+}
 \ProcessOptions*
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\def\asy@warn@attach@xetex@clash{%
+  \PackageWarning{asymptote}{%
+    The [attach] option is not available for XeTeX use
+  }%
+}
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\def\asy@warn@attach@inline@clash#1{%
+  \PackageWarning{asymptote}{%
+    Options "attach" and "inline" cannot be used together. Using "#1"
+  }%
+}
 %    \end{macrocode}
 %
 %    \begin{macrocode}
@@ -580,16 +614,34 @@ Licence: GPL2+
 \define@key{ASYkeys}{viewportheight}{%
   \edef\ASYviewportheight{\the\dimexpr#1\relax}%
 }
+%    \end{macrocode}
+% The following options are mutually exclusive
+%    \begin{macrocode}
 \define@key{ASYkeys}{attach}[true]{%
   \ifthenelse{\equal{#1}{true}}
-    {\ASYattachtrue
-     \asy@check@attachfile
-    \ASYinlinefalse}
+    {%
+      \ifxetex
+        \asy@warn@attach@xetex@clash
+      \else
+        \ASYattachtrue
+        \ifASYinline
+          \ASYinlinefalse
+          \asy@warn@attach@inline@clash{attach}%
+        \fi
+      \fi
+    }
     {\ASYattachfalse}%
 }
 \define@key{ASYkeys}{inline}[true]{%
   \ifthenelse{\equal{#1}{true}}
-    {\ASYinlinetrue}{\ASYinlinefalse}%
+    {%
+      \ASYinlinetrue
+      \ifASYattachtrue
+        \ASYattachfalse
+        \asy@warn@attach@inline@clash{inline}%
+      \fi
+    }
+    {\ASYinlinefalse}%
 }
 %    \end{macrocode}
 %
