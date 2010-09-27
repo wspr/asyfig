@@ -71,11 +71,12 @@ Licence: GPL2+
 %
 % \subsection{Package loading and options}
 %
-% The package may take two options at load time: \texttt{inline} or \texttt{attach}. These options are mutually exclusive; please don't attempt to use both. The \texttt{inline} option uses Asymptote's `inline' mode whereby included graphics have their labels typeset in the environment of the document they are contained within. Otherwise the Asymptote graphics are self-contained and their formatting is independent of the document.
+% The package may take two options at load time: \texttt{inline} or \texttt{attach}.
+% These options can also be set at any time with the \cmd\asysetup\marg{options} command, or specified individually in the optional argument to each \texttt{asy} environment or \texttt{asyinclude} command.
 %
-% The \texttt{attach} option allows generated graphics to be embedded within the PDF using the \texttt{attachfile2} package; please load that package separately if you wish to use it. The \texttt{attach} option cannot be used with the \XeTeX\ engine.
+% The \texttt{inline} option uses Asymptote's `inline' mode whereby included graphics have their labels typeset in the environment of the document they are contained within. Otherwise the Asymptote graphics are self-contained and their formatting is independent of the document.
 %
-% These options can be set at any time with the \cmd\asysetup\marg{options} command.
+% The \texttt{attach} option allows generated graphics to be embedded within the PDF using the \texttt{attachfile2} package; please load that package separately if you wish to use it. The \texttt{attach} option cannot be used together with the \texttt{inline} option; if both are requested, the \texttt{attach} option takes precendence. Finally, the \texttt{attach} option cannot be used with the \texttt{xetex} engine (until it is supported in the \texttt{attachfile2} package).
 %
 % This package produces quite a number of output files, which by default are created in the same directory as the \LaTeX\ document that is being compiled. To keep things more tidy, you can specify an output directory for these files by defining the \cmd\asydir\ command. For example, if you wish to store the figure files in the subdirectory \texttt{asytmp/}, the you would write \verb|\renewcommand\asydir{asytmp}|.
 %
