@@ -255,23 +255,13 @@ Licence: GPL2+
 }
 %    \end{macrocode}
 %
-%    \begin{macrocode}
-\def\asy@warn@attach@inline@clash#1{%
-  \PackageWarning{asymptote}{%
-    Options "attach" and "inline" cannot be used together. Using "#1"
-  }%
-}
-%    \end{macrocode}
-%
 % \subsection{Package options}
 %
 %    \begin{macrocode}
 \DeclareOption{inline}{%
-  \ifASYattach
-    \ASYattachfalse
-    \asy@warn@attach@inline@clash{inline}%
+  \ifASYattach\else
+    \ASYinlinetrue
   \fi
-  \ASYinlinetrue
 }
 \DeclareOption{attach}{%
   \ifxetex
@@ -279,10 +269,8 @@ Licence: GPL2+
   \else
     \ifASYinline
       \ASYinlinefalse
-      \asy@warn@attach@inline@clash{attach}%
-    \else
-      \asy@check@attachfile
     \fi
+    \asy@check@attachfile
     \ASYattachtrue
   \fi
 }
@@ -625,11 +613,10 @@ Licence: GPL2+
       \ifxetex
         \asy@warn@attach@xetex@clash
       \else
-        \ASYattachtrue
         \ifASYinline
           \ASYinlinefalse
-          \asy@warn@attach@inline@clash{attach}%
         \fi
+        \ASYattachtrue
       \fi
     }
     {\ASYattachfalse}%
@@ -637,10 +624,8 @@ Licence: GPL2+
 \define@key{ASYkeys}{inline}[true]{%
   \ifthenelse{\equal{#1}{true}}
     {%
-      \ASYinlinetrue
-      \ifASYattach
-        \ASYattachfalse
-        \asy@warn@attach@inline@clash{inline}%
+      \ifASYattach\else
+        \ASYinlinetrue
       \fi
     }
     {\ASYinlinefalse}%
