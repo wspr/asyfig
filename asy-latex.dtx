@@ -73,7 +73,7 @@ Licence: GPL2+
 %
 % The package may take two options at load time: \texttt{inline} or \texttt{attach}. These options are mutually exclusive; please don't attempt to use both. The \texttt{inline} option uses Asymptote's `inline' mode whereby included graphics have their labels typeset in the environment of the document they are contained within. Otherwise the Asymptote graphics are self-contained and their formatting is independent of the document.
 %
-% The \texttt{attach} option allows 3D graphics to be embedded within the PDF using the \texttt{attachfile2} package; please load that package separately if you wish to use it. This option requires (at time of writing) PDF output; it cannot be used in a DVI workflow.
+% The \texttt{attach} option allows generated graphics to be embedded within the PDF using the \texttt{attachfile2} package; please load that package separately if you wish to use it. The \texttt{attach} option cannot be used with the \XeTeX\ engine.
 %
 % These options can be set at any time with the \cmd\asysetup\marg{options} command.
 %
