@@ -10,7 +10,7 @@ test: asymptote.sty clean usage $(TEST_PDF) $(TEST_XETEX) $(TEST_DVI)
 	make clean
 
 clean:
-	rm -f -- *-*.tex *-*.asy *.pre *-*-*.pdf *.eps *-*-*.dvi *.log *.aux *.out *.prc *.js *.synctex* *.atfi
+	rm -f -- *-*.tex *-*.asy *.pre *-*-*.pdf *.eps *-*-*.dvi *.log *.aux *.out *.prc *.js *.synctex* *.atfi *.ps
 
 cleanall: clean
 	rm -f -- *.dvi *.pdf
