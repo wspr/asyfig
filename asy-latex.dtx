@@ -496,38 +496,42 @@ Licence: GPL2+
 %    \begin{macrocode}
 \def\asy@input@graphic{%
   \ifASYinline
-    \IfFileExists{\AsyFile.tex}{%
+    \IfFileExists{"\AsyFile.tex"}{%
       \catcode`:=12\relax
-      \@@input\AsyFile.tex\relax
+      \@@input"\AsyFile.tex"\relax
     }{%
       \PackageWarning{asymptote}{file `\AsyFile.tex' not found}%
     }%
   \else
-    \IfFileExists{\AsyFile.\AsyExtension}{%
+    \IfFileExists{"\AsyFile.\AsyExtension"}{%
       \ifASYattach
         \ifASYPDF
-          \IfFileExists{\AsyFile+0.pdf}{%
-            \setbox\ASYbox=\hbox{\includegraphics[hiresbb]{\AsyFile+0}}%
+          \IfFileExists{"\AsyFile+0.pdf"}{%
+            \setbox\ASYbox=\hbox{\includegraphics[hiresbb]{"\AsyFile+0".pdf}}%
           }{%
-            \setbox\ASYbox=\hbox{\includegraphics[hiresbb]{\AsyFile}}%
+            \setbox\ASYbox=\hbox{\includegraphics[hiresbb]{"\AsyFile".pdf}}%
           }%
         \else
-          \setbox\ASYbox=\hbox{\includegraphics[hiresbb]{\AsyFile}}%
+          \setbox\ASYbox=\hbox{\includegraphics[hiresbb]{"\AsyFile.eps"}}%
         \fi
-        \textattachfile{\AsyFile.\AsyExtension}{\phantom{\copy\ASYbox}}%
+        \textattachfile{"\AsyFile.\AsyExtension"}{\phantom{\copy\ASYbox}}%
         \vskip-\ht\ASYbox
         \indent
         \box\ASYbox
       \else
-        \includegraphics[hiresbb]{\AsyFile}%
+        \ifASYPDF
+          \includegraphics[hiresbb]{"\AsyFile".pdf}%
+        \else
+          \includegraphics[hiresbb]{"\AsyFile.eps"}%
+        \fi
       \fi
     }{%
 %    \end{macrocode}
 % I'm not sure why this code branch is here. Is it in case a previous run has generated an inline graphic?
 %    \begin{macrocode}
-      \IfFileExists{\AsyFile.tex}{%
+      \IfFileExists{"\AsyFile.tex"}{%
         \catcode`:=12
-        \@@input\AsyFile.tex\relax
+        \@@input"\AsyFile.tex"\relax
       }{%
         \PackageWarning{asymptote}{%
           file `\AsyFile.\AsyExtension' not found%
