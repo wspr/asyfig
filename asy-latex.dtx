@@ -498,27 +498,44 @@ Licence: GPL2+
 %
 %    \begin{macrocode}
 \def\asy@finalise@stream{%
-  \ifx\ASYwidth\empty
-    \def\ASYwidth{0}%
-  \fi
-  \ifx\ASYheight\empty
-    \def\ASYheight{0}%
-  \fi
-  \ifASYattach
-    \def\ASYdefaultviewportwidth{0}%
+%    \end{macrocode}
+% Setting \verb|size()|. Only inserted if one of the dimensions is
+% set explicitly (i.e., if both height and width are not empty).
+%    \begin{macrocode}
+  \ifx\ASYwidth\@empty
+    \ifx\ASYheight\@empty
+      % write nothing!
+    \else
+      \immediate\write\AsyStream{size(0,\ASYheight);}%
+    \fi
   \else
-    \def\ASYdefaultviewportwidth{\the\linewidth}%
+    \ifx\ASYheight\@empty
+      \immediate\write\AsyStream{size(\ASYwidth,0);}%
+    \else
+      \immediate\write\AsyStream{size(\ASYwidth,\ASYheight);}%
+    \fi
   \fi
-  \ifx\ASYviewportwidth\empty
-    \def\ASYviewportwidth{0}%
+%    \end{macrocode}
+% Setting \verb|viewportsize=()|. Same logic as for \verb|size()|.
+% Note that \cs{ASYviewportwidth} varies according to \cs{ASYattach},
+% by default, so it needs to be fully expanded before checking if it equals
+% zero.
+%    \begin{macrocode}
+  \edef\ASYviewportwidth{\ASYviewportwidth}% locally "freeze" viewportwidth
+  \ifx\ASYviewportwidth\@empty
+    \ifx\ASYviewportheight\@empty
+      % write nothing!
+    \else
+      \immediate\write\AsyStream{viewportsize=(0,\ASYviewportheight);}%
+    \fi
+  \else
+    \ifx\ASYviewportheight\@empty
+      \immediate\write\AsyStream{viewportsize=(\ASYviewportwidth,0);}%
+    \else
+      \immediate\write\AsyStream{%
+        viewportsize=(\ASYviewportwidth,\ASYviewportheight);}%
+    \fi
   \fi
-  \ifx\ASYviewportheight\empty
-    \def\ASYviewportheight{0}%
-  \fi
-  \immediate\write\AsyStream{%
-    size(\ASYwidth,\ASYheight);^^J%
-    viewportsize=(\ASYviewportwidth,\ASYviewportheight);
-  }%
   \immediate\closeout\AsyStream
 }
 %    \end{macrocode}
@@ -631,6 +648,9 @@ Licence: GPL2+
   \edef\ASYheight{\the\dimexpr#1\relax}%
 }
 \def\ASYviewportwidth{\ASYdefaultviewportwidth}
+\def\ASYdefaultviewportwidth{%
+  \ifASYattach \@empty \else \the\linewidth \fi
+}
 \define@key{ASYkeys}{viewportwidth}{%
   \edef\ASYviewportwidth{\the\dimexpr#1\relax}%
 }
