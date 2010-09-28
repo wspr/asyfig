@@ -601,6 +601,9 @@ Licence: GPL2+
   \begingroup
   \stepcounter{asy}%
   \setkeys{ASYkeys}{#1}%
+  \ifASYattach
+    \ASYinlinefalse
+  \fi
   \ifx\asydir\empty\else
     \def\ASYprefix{\asydir/}%
   \fi
