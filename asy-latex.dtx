@@ -434,6 +434,15 @@ Licence: GPL2+
 \newcommand\asy[1][]{%
   \stepcounter{asy}%
   \setkeys{ASYkeys}{#1}%
+%    \end{macrocode}
+% Disable the "inline" option if "attach" is enabled:
+%    \begin{macrocode}
+  \ifASYattach
+    \ASYinlinefalse
+  \fi
+%    \end{macrocode}
+%
+%    \begin{macrocode}
   \ifx\asydir\empty\else
     \def\ASYprefix{\asydir/}%
   \fi
