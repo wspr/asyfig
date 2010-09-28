@@ -76,7 +76,7 @@ Licence: GPL2+
 %
 % The \texttt{inline} option uses Asymptote's `inline' mode whereby included graphics have their labels typeset in the environment of the document they are contained within. Otherwise the Asymptote graphics are self-contained and their formatting is independent of the document.
 %
-% The \texttt{attach} option allows generated graphics to be embedded within the PDF using the \texttt{attachfile2} package; please load that package separately if you wish to use it. The \texttt{attach} option cannot be used together with the \texttt{inline} option; if both are requested, the \texttt{attach} option takes precendence. Finally, the \texttt{attach} option cannot be used with the \texttt{xetex} engine (until it is supported in the \texttt{attachfile2} package).
+% The \texttt{attach} option allows generated graphics to be embedded within the PDF using the \texttt{attachfile2} package; please load that package separately if you wish to use it. The \texttt{attach} option cannot be used together with the \texttt{inline} option; if both are requested, the \texttt{attach} option takes precendence.
 %
 % This package produces quite a number of output files, which by default are created in the same directory as the \LaTeX\ document that is being compiled. To keep things more tidy, you can specify an output directory for these files by defining the \cmd\asydir\ command. For example, if you wish to store the figure files in the subdirectory \texttt{asytmp/}, the you would write \verb|\renewcommand\asydir{asytmp}|.
 %
@@ -246,16 +246,6 @@ Licence: GPL2+
 \def\csarg#1#2{\expandafter#1\csname#2\endcsname}
 %    \end{macrocode}
 %
-% \subsection{Warnings}
-%
-%    \begin{macrocode}
-\def\asy@warn@attach@xetex@clash{%
-  \PackageWarning{asymptote}{%
-    The [attach] option is not available for XeTeX use
-  }%
-}
-%    \end{macrocode}
-%
 % \subsection{Package options}
 %
 %    \begin{macrocode}
@@ -265,15 +255,11 @@ Licence: GPL2+
   \fi
 }
 \DeclareOption{attach}{%
-  \ifxetex
-    \asy@warn@attach@xetex@clash
-  \else
     \ifASYinline
       \ASYinlinefalse
     \fi
     \asy@check@attachfile
     \ASYattachtrue
-  \fi
 }
 \ProcessOptions*
 %    \end{macrocode}
@@ -615,14 +601,10 @@ Licence: GPL2+
 \define@key{ASYkeys}{attach}[true]{%
   \ifthenelse{\equal{#1}{true}}
     {%
-      \ifxetex
-        \asy@warn@attach@xetex@clash
-      \else
         \ifASYinline
           \ASYinlinefalse
         \fi
         \ASYattachtrue
-      \fi
     }
     {\ASYattachfalse}%
 }

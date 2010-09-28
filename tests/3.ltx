@@ -1,16 +1,10 @@
 
 \documentclass{article}
-\usepackage{ifxetex}
-\ifxetex
-  \typeout{SKIPPING TEST: ATTACH OPTION NOT SUPPORTED BY ASYMPTOTE}
-  \usepackage{asymptote}
+\usepackage[attach]{asymptote}
+\ifpdf
+  \usepackage{attachfile2}
 \else
-  \usepackage[attach]{asymptote}
-  \ifpdf
-    \usepackage{attachfile2}
-  \else
-    \usepackage[dvips]{attachfile2}
-   \fi
+  \usepackage[dvips]{attachfile2}
 \fi
 \begin{document}
 \begin{asy}
