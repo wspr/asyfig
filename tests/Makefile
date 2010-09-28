@@ -6,7 +6,7 @@ TEST_PDF = $(addsuffix -pdf.pdf,$(TESTS))
 TEST_DVI = $(addsuffix -dvi.pdf,$(TESTS))
 TEST_XETEX = $(addsuffix -xetex.pdf,$(TESTS))
 
-test: asymptote.sty clean usage $(TEST_PDF) $(TEST_XETEX) $(TEST_DVI)
+test: asymptote.sty clean latexusage.pdf $(TEST_PDF) $(TEST_XETEX) $(TEST_DVI)
 	make clean
 
 clean:
@@ -16,12 +16,13 @@ cleanall: clean
 	rm -f -- *.dvi *.pdf
 
 asymptote.sty: ../asymptote.sty
+	echo "Updating asymptote.sty"
 	cp $< $@
 
 ../asymptote.sty: ../asy-latex.dtx
 	cd ..; tex asy-latex.dtx &> /dev/null;
 
-usage: latexusage.tex
+latexusage.pdf: asymptote.sty latexusage.tex
 	echo "Testing PDF output for file 'latexusage'"
 	echo "	Compiling PDF"
 	pdflatex latexusage &> /dev/null
@@ -34,7 +35,7 @@ usage: latexusage.tex
 	echo "Test for 'latexusage' passed."	
 	echo "  "	
 
-%-pdf.pdf: %.ltx
+%-pdf.pdf: asymptote.sty %.ltx
 	echo "Testing PDF output for test '$*'"
 	echo "	Compiling PDF"
 	pdflatex -jobname="$*-pdf" $*.ltx &> /dev/null
@@ -48,7 +49,7 @@ usage: latexusage.tex
 	echo "  "
 
 
-%-xetex.pdf: %.ltx
+%-xetex.pdf: asymptote.sty %.ltx
 	echo "Testing XeLaTeX output for test '$*'"
 	echo "	Compiling PDF with XeLaTeX"
 	xelatex -jobname="$*-xetex" $*.ltx &> /dev/null
@@ -61,7 +62,7 @@ usage: latexusage.tex
 	echo "Test '$*' for XeLaTeX passed."	
 	echo "  "
 
-%-dvi.dvi: %.ltx
+%-dvi.dvi: asymptote.sty %.ltx
 	echo "Testing DVI output for test '$*'"
 	echo "	Compiling DVI"
 	latex -jobname="$*-dvi" $*.ltx &> /dev/null
