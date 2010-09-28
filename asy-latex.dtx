@@ -288,14 +288,9 @@ Licence: GPL2+
 %
 %    \begin{macrocode}
 \DeclareOption{inline}{%
-  \ifASYattach\else
     \ASYinlinetrue
-  \fi
 }
 \DeclareOption{attach}{%
-    \ifASYinline
-      \ASYinlinefalse
-    \fi
     \asy@check@attachfile
     \ASYattachtrue
 }
