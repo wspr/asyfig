@@ -12,6 +12,7 @@ The ASYMPTOTE package
 
 (C) 2003 Tom Prince
 (C) 2003-2010 John Bowman
+(C) 2010 Will Robertson
 
 Adapted from comment.sty
 
@@ -63,7 +64,7 @@ Licence: GPL2+
 % \end{abstract}
 %
 % \tableofcontents
-% 
+%
 % \section{Introduction}
 %
 % This is the documentation for the \LaTeX\ package \texttt{asymptote}
@@ -169,7 +170,7 @@ Licence: GPL2+
 % \subsection{Allocations}
 %
 % \paragraph{Allocations}
-% 
+%
 %    \begin{macrocode}
 \newbox\ASYbox
 \newcounter{asy}
@@ -251,14 +252,14 @@ Licence: GPL2+
 %    \begin{macrocode}
 \newif\if@asy@attachfile@loaded
 %    \end{macrocode}
-% 
+%
 %    \begin{macrocode}
 \AtBeginDocument{%
   \@ifpackageloaded{attachfile2}{\@asy@attachfile@loadedtrue}{}%
   \let\asy@check@attachfile\asy@check@attachfile@loaded
 }
 %    \end{macrocode}
-% 
+%
 %    \begin{macrocode}
 \newcommand\asy@check@attachfile@loaded{%
   \if@asy@attachfile@loaded\else
@@ -270,7 +271,7 @@ Licence: GPL2+
   \fi
 }
 %    \end{macrocode}
-% 
+%
 %    \begin{macrocode}
 \newcommand\asy@check@attachfile{%
   \AtBeginDocument{\asy@check@attachfile@loaded}%
@@ -327,7 +328,7 @@ Licence: GPL2+
 %    \end{macrocode}
 %
 % \subsection{Bug squashing}
-% 
+%
 %    \begin{macrocode}
 \def\unquoteJobname#1"#2"#3\relax{%
   \def\rawJobname{#1}%
@@ -336,7 +337,7 @@ Licence: GPL2+
   \fi
 }
 \expandafter\unquoteJobname\jobname""\relax
-%    \end{macrocode} 
+%    \end{macrocode}
 % Work around jobname bug in MiKTeX 2.5 and 2.6:
 % Turn stars in file names (resulting from spaces, etc.) into minus signs
 %    \begin{macrocode}
@@ -375,7 +376,7 @@ Licence: GPL2+
 %    \end{macrocode}
 %
 % \subsection{Input/Output}
-% 
+%
 %    \begin{macrocode}
 \immediate\openout\AsyPreStream=\jobname.pre\relax
 \AtEndDocument{\immediate\closeout\AsyPreStream}
@@ -386,7 +387,7 @@ Licence: GPL2+
   \immediate\write\AsyStream{\detokenize{#1}}%
 }
 %    \end{macrocode}
-% 
+%
 %    \begin{macrocode}
 \def\globalASYdefs{}
 \def\WriteGlobalAsyLine#1{%
@@ -397,12 +398,12 @@ Licence: GPL2+
 %    \end{macrocode}
 %
 % \subsection{Commands for verbatim processing environments}
-% 
+%
 %    \begin{macrocode}
 \def\ProcessAsymptote#1{%
   \begingroup
   \def\CurrentAsymptote{#1}%
-  \let\do\@makeother \dospecials 
+  \let\do\@makeother \dospecials
   \@makeother\^^L% and whatever other special cases
   \endlinechar`\^^M \catcode`\^^M=12 \xAsymptote
 }
@@ -431,9 +432,9 @@ Licence: GPL2+
   }
 \endgroup
 %    \end{macrocode}
-% 
+%
 % \subsection{User interface}
-% 
+%
 %    \begin{macrocode}
 \newcommand\asy[1][]{%
   \stepcounter{asy}%
@@ -517,7 +518,7 @@ Licence: GPL2+
   \immediate\closeout\AsyStream
 }
 %    \end{macrocode}
-% 
+%
 %    \begin{macrocode}
 \def\asy@input@graphic{%
   \ifASYinline
@@ -598,7 +599,7 @@ Licence: GPL2+
   \endgroup
 }
 %    \end{macrocode}
-% 
+%
 %    \begin{macrocode}
 \newcommand{\ASYanimategraphics}[5][]{%
   \IfFileExists{_#3.pdf}{%
@@ -652,7 +653,6 @@ Licence: GPL2+
 }
 %    \end{macrocode}
 %
-% 
 % \iffalse
 %</pkg>
 % \fi
