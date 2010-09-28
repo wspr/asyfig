@@ -288,11 +288,11 @@ Licence: GPL2+
 %
 %    \begin{macrocode}
 \DeclareOption{inline}{%
-    \ASYinlinetrue
+  \ASYinlinetrue
 }
 \DeclareOption{attach}{%
-    \asy@check@attachfile
-    \ASYattachtrue
+  \asy@check@attachfile
+  \ASYattachtrue
 }
 \ProcessOptions*
 %    \end{macrocode}
@@ -435,7 +435,7 @@ Licence: GPL2+
   \stepcounter{asy}%
   \setkeys{ASYkeys}{#1}%
   \ifx\asydir\empty\else
-      \def\ASYprefix{\asydir/}%
+    \def\ASYprefix{\asydir/}%
   \fi
   \immediate\write\AsyPreStream{%
     \noexpand\InputIfFileExists{%
@@ -576,7 +576,7 @@ Licence: GPL2+
   \stepcounter{asy}%
   \setkeys{ASYkeys}{#1}%
   \ifx\asydir\empty\else
-      \def\ASYprefix{\asydir/}%
+    \def\ASYprefix{\asydir/}%
   \fi
   \immediate\write\AsyPreStream{%
     \noexpand\InputIfFileExists{%
@@ -634,16 +634,12 @@ Licence: GPL2+
 %    \begin{macrocode}
 \define@key{ASYkeys}{attach}[true]{%
   \ifthenelse{\equal{#1}{true}}
-    {%
-        \ASYattachtrue
-    }
+    {\ASYattachtrue}
     {\ASYattachfalse}%
 }
 \define@key{ASYkeys}{inline}[true]{%
   \ifthenelse{\equal{#1}{true}}
-    {%
-        \ASYinlinetrue
-    }
+    {\ASYinlinetrue}
     {\ASYinlinefalse}%
 }
 %    \end{macrocode}
