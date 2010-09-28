@@ -37,7 +37,7 @@ Licence: GPL2+
 %</driver>
 %<pkg>\ProvidesPackage{asymptote}
 %<*pkg>
-  [2010/09/28 v1.20 Asymptote style file for LaTeX]
+  [2010/09/28 v1.21 Asymptote style file for LaTeX]
 %</pkg>
 %
 %<*driver>
@@ -53,38 +53,60 @@ Licence: GPL2+
 % \GetFileInfo{asy-latex.dtx}
 % \title{The \textsf{asymptote} package}
 % \author{%
-%    John Bowman et al.
+%    John Bowman, Tom Prince, and Will Robertson
 % }
 % \date{\filedate\qquad\fileversion}
 % \maketitle
 % \begin{abstract}
-% This package provides integration of inline and external Asymptote graphics within a \LaTeX\ document.
+% This package provides integration of inline and external Asymptote
+% graphics within a \LaTeX\ document.
 % \end{abstract}
 %
 % \tableofcontents
 % 
 % \section{Introduction}
 %
-% This is the documentation for the \LaTeX\ package \texttt{asymptote} which accompanies the Asymptote drawing package. For further details on Asymptote, please see its documentation in \texttt{asymptote.pdf}.
+% This is the documentation for the \LaTeX\ package \texttt{asymptote}
+% which accompanies the Asymptote drawing package. For further details on
+% Asymptote, please see its documentation in \texttt{asymptote.pdf}.
 %
 % \section{User syntax}
 %
 % \subsection{Package loading and options}
 %
-% The package may take two options at load time: \texttt{inline} or \texttt{attach}.
-% These options can also be set at any time with the \cmd\asysetup\marg{options} command, or specified individually in the optional argument to each \texttt{asy} environment or \texttt{asyinclude} command.
+% The package may take two options at load time: \texttt{inline} or
+% \texttt{attach}.
+% These options can also be set at any time with the
+% \cmd\asysetup\marg{options} command, or specified individually in the
+% optional argument to each \texttt{asy} environment or \texttt{asyinclude}
+% command.
 %
-% The \texttt{inline} option uses Asymptote's `inline' mode whereby included graphics have their labels typeset in the environment of the document they are contained within. Otherwise the Asymptote graphics are self-contained and their formatting is independent of the document.
+% The \texttt{inline} option uses Asymptote's `inline' mode whereby
+% included graphics have their labels typeset in the environment of the
+% document they are contained within. Otherwise the Asymptote graphics are
+% self-contained and their formatting is independent of the document.
 %
-% The \texttt{attach} option allows generated graphics to be embedded within the PDF using the \texttt{attachfile2} package; please load that package separately if you wish to use it. The \texttt{attach} option cannot be used together with the \texttt{inline} option; if both are requested, the \texttt{attach} option takes precendence.
+% The \texttt{attach} option allows generated graphics to be embedded
+% within the PDF using the \texttt{attachfile2} package; please load that
+% package separately if you wish to use it. The \texttt{attach} option
+% takes precedence over the \texttt{inline} option.
 %
-% This package produces quite a number of output files, which by default are created in the same directory as the \LaTeX\ document that is being compiled. To keep things more tidy, you can specify an output directory for these files by defining the \cmd\asydir\ command. For example, if you wish to store the figure files in the subdirectory \texttt{asytmp/}, the you would write \verb|\renewcommand\asydir{asytmp}|.
+% This package produces quite a number of output files, which by default
+% are created in the same directory as the \LaTeX\ document that is being
+% compiled. To keep things more tidy, you can specify an output directory
+% for these files by defining the \cmd\asydir\ command. For example, if you
+% wish to store the figure files in the subdirectory \texttt{asytmp/}, the
+% you would write \verb|\renewcommand\asydir{asytmp}|.
 %
-% Alternatively (and tentatively), you may write \verb|dir=asytmp| in either the \texttt{asy} environment options or the options to \cmd\asysetup.
+% Alternatively (and tentatively), you may write \verb|dir=asytmp| in
+% either the \texttt{asy} environment options or the options to
+% \cmd\asysetup.
 %
 % \subsection{Commands for inserting Asymptote graphics}
 %
-% The main environment defined by the package is the \texttt{asy} environment, in which verbatim Asymptote code is placed that will be compiled for generating a graphic in the document. For example,
+% The main environment defined by the package is the \texttt{asy}
+% environment, in which verbatim Asymptote code is placed that will be
+% compiled for generating a graphic in the document. For example,
 % \begin{verbatim}
 % \begin{figure}
 % \begin{asy}[ <options> ]
@@ -93,30 +115,42 @@ Licence: GPL2+
 % \caption{...}\label{...}
 % \end{verbatim}
 %
-% If you have Asymptote code in a separate file, you can include it with the \cmd\asyinclude\oarg{options}\marg{filename}\ command.
+% If you have Asymptote code in a separate file, you can include it with
+% the \cmd\asyinclude\oarg{options}\marg{filename}\ command.
 %
-% For Asymptote code that should be included in \emph{every} graphic, define it using the \texttt{asydef} environment.
+% For Asymptote code that should be included in \emph{every} graphic,
+% define it using the \texttt{asydef} environment.
 %
 % \subsection{Graphics options}
 %
-% Both the \texttt{asy} environment and the \cmd\asyinclude command take optional parameters for controlling aspects of the graphics creation. In addition to locally setting \texttt{inline} and \texttt{attach}, the following options may also be used:
+% Both the \texttt{asy} environment and the \cmd\asyinclude\ command take
+% optional parameters for controlling aspects of the graphics creation. In
+% addition to locally setting \texttt{inline} and \texttt{attach}, the
+% following options may also be used:
 % \begin{description}
-% \item[height] Height of the graphic
-% \item[width] Ditto for width
-% \item[viewportheight] not sure yet
-% \item[viewportwidth] Ditto
+% \item[height] Height of the figure
+% \item[width] Width of the figure
+% \item[viewportheight] Viewport height for 3D figures
+% \item[viewportwidth] Viewport width for 3D figures
 % \end{description}
 % These may also be set globally using the \cmd\asysetup\ command.
 %
 % \section{Processing the document}
 %
-% After running \LaTeX\ on the document, it is necessary to process the Asymptote graphics so they can be included in the next compilation. The simplest procedure is a recipe such as
+% After running \LaTeX\ on the document, it is necessary to process the
+% Asymptote graphics so they can be included in the next compilation. The
+% simplest procedure is a recipe such as
 % \begin{verbatim}
 % pdflatex mydoc
 % asy mydoc-*.asy
 % pdflatex mydoc
 % \end{verbatim}
-% This technique will recompile each graphic every time, however. To only recompile graphics that have changed, use the \texttt{latexmk} tool. Asymptote is distributed with a \texttt{latexmkrc} configuration file; place this file in a place where \texttt{latexmk} will find it and your document may be compiled, including the \texttt{asy} compilations, with \texttt{latexmk mydoc}.
+% This technique will recompile each graphic every time, however. To only
+% recompile graphics that have changed, use the \texttt{latexmk}
+% tool. Asymptote is distributed with a \texttt{latexmkrc} configuration
+% file; place this file in a place where \texttt{latexmk} will find it and
+% your document may be compiled, including the \texttt{asy} compilations,
+% with \texttt{latexmk mydoc} or \texttt{latexmk --pdf mydoc}.
 %
 % \section{Implementation}
 %
@@ -160,7 +194,10 @@ Licence: GPL2+
 %    \end{macrocode}
 %
 % \paragraph{Emulating packages}
-% We cannot assume that Asymptote users have recent \TeX\ distributions. (E.g., Fedora until recently still shipped teTeX.) So load \textsf{ifpdf} and \textsf{ifxetex} if they exist; otherwise, emulate them.
+% We cannot assume that Asymptote users have recent
+% \TeX\ distributions. (E.g., Fedora until recently still shipped teTeX.)
+% So load \textsf{ifpdf} and \textsf{ifxetex} if they exist; otherwise,
+% emulate them.
 %
 % In due course, delete this code and just load the packages.
 %    \begin{macrocode}
@@ -271,7 +308,8 @@ Licence: GPL2+
 %
 %
 % \subsection{Testing for PDF output}
-% Note this is not quite the same as \cs{ifpdf}, since we still want PDF output when using XeTeX.
+% Note this is not quite the same as \cs{ifpdf}, since we still want PDF
+% output when using XeTeX.
 %    \begin{macrocode}
 \newif\ifASYPDF
 \ifxetex
@@ -369,7 +407,8 @@ Licence: GPL2+
   \endlinechar`\^^M \catcode`\^^M=12 \xAsymptote
 }
 %    \end{macrocode}
-% Need lots of comment chars here because \meta{line end} is no longer a space character.
+% Need lots of comment chars here because \meta{line end} is no longer a
+% space character.
 %    \begin{macrocode}
 \begingroup
   \catcode`\^^M=12 \endlinechar=-1\relax%
@@ -424,8 +463,7 @@ Licence: GPL2+
   \immediate\openout\AsyStream=\ASYprefix\jobname-\the\c@asy.asy\relax
   \gdef\AsyFile{\ASYprefix\Jobname-\the\c@asy}%
   \immediate\write\AsyStream{%
-    if(!settings.multipleView)^^J%
-    settings.batchView=false;^^J%
+    if(!settings.multipleView) settings.batchView=false;^^J%
     \ifxetex
       settings.tex="xelatex";^^J%
     \else\ifASYPDF
@@ -514,7 +552,7 @@ Licence: GPL2+
       \fi
     }{%
 %    \end{macrocode}
-% I'm not sure why this code branch is here. Is it in case a previous run has generated an inline graphic?
+% 3D PRC figures require inline mode.
 %    \begin{macrocode}
       \IfFileExists{"\AsyFile.tex"}{%
         \catcode`:=12
@@ -596,14 +634,11 @@ Licence: GPL2+
   \edef\ASYviewportheight{\the\dimexpr#1\relax}%
 }
 %    \end{macrocode}
-% The following options are mutually exclusive
+%
 %    \begin{macrocode}
 \define@key{ASYkeys}{attach}[true]{%
   \ifthenelse{\equal{#1}{true}}
     {%
-        \ifASYinline
-          \ASYinlinefalse
-        \fi
         \ASYattachtrue
     }
     {\ASYattachfalse}%
@@ -611,9 +646,7 @@ Licence: GPL2+
 \define@key{ASYkeys}{inline}[true]{%
   \ifthenelse{\equal{#1}{true}}
     {%
-      \ifASYattach\else
         \ASYinlinetrue
-      \fi
     }
     {\ASYinlinefalse}%
 }
